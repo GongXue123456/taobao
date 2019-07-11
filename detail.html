@@ -53,8 +53,8 @@
         </div>
         <div class="p-infor">
           <p name="productTitle" class="infor-name"></p>
-          <p class="infor-price"><span>￥ </span><span class="price productPrice" name="seletPrice"></span> <span
-              class="balance">库存： <span name="productNumber"></span></span>
+          <p class="infor-price"><span class="price productPrice" name="seletPrice"></span><span>&nbsp;N TOKEN</span>
+            <span class="balance">库存： <span name="productNumber"></span></span>
           </p>
         </div>
         <div class="close" id="close"></div>
@@ -127,8 +127,6 @@
         product_code: $.getUrlParam('product_code'),
         shoptype: $.getUrlParam('user_type')
       }
-      console.log(params.product_code)
-      console.log(params.shoptype)
       $.ajax({
         type: "GET",
         url: "http://47.99.93.123:9090/rest/tbk/goods/itemdetail",
@@ -143,7 +141,6 @@
         },
         success: function (response) {
           var item = response.data;
-          console.log(item)
           detail_data = item;
           if (item) {
             order.product = item;
@@ -155,7 +152,6 @@
             }
             aaa = aaa.substring(0, aaa.length - 1);
             arr = aaa.split(";");
-            console.log(aaa)
             if (arr[0]) {
               a0 = arr[0].split(":")[0];
               a1 = arr[0].split(":")[1];
@@ -176,7 +172,7 @@
               }
             }
             var imageUrl = item.images;
-            var price = item.zk_final_price ? '￥' + item.zk_final_price : "￥0.00";
+            var price = item.zk_final_price ? item.zk_final_price + " N TOKEN" : "0 N TOKEN";
             if (imageUrl[0]) {
               imageUrl[0] = imageUrl[0].replace(/\\/g, "/");
               $("img[name=produtImage1]").attr("src", "https:" + imageUrl[0]);
@@ -235,7 +231,6 @@
         },
         success: function (response) {
           var item = response.data;
-          console.log(item)
           if (item) {
             var imageUrl = item.item_detail;
             $.each(imageUrl, function (index, item) {
@@ -258,11 +253,9 @@
 
           if (aaa.indexOf(a0) > -1 && pid == a0) {
             a1 = e.target.dataset.vid;
-            console.log(a1)
             size = e.target.dataset.name
           } else if (aaa.indexOf(b0) > -1 && pid == b0) {
             b1 = e.target.dataset.vid;
-            console.log(b1)
             color = e.target.dataset.name;
           }
           if (a0 == undefined || a1 == undefined) {
@@ -277,7 +270,6 @@
           for (var k = 0; k < sku.skulist.length; k++) {
             if (sku.skulist[k].propPath == aaa) {
               var skuId = sku.skulist[k].skuId;
-              console.log(skuId)
               $("span[name='seletPrice']").html(sku.skuprice[skuId].price.priceText);
               $("span[name='productNumber']").html(sku.skuprice[skuId].quantity);
             }
@@ -326,8 +318,6 @@
         }
         var number = $("input[name='number']").val();
         var price = $("span[name='seletPrice']").html().trim();
-        console.log(size)
-        console.log(color)
         numArr = {
           img: detail_data.images[0],
           title: detail_data.title,

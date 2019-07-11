@@ -36,7 +36,7 @@
         <p name="productName"></p>
         <p name="productName1"></p>
         <p class="price-infor">
-          <span class="price">￥ <span name="selectedPrice"></span></span>
+          <span class="price"><span name="selectedPrice"></span>&nbspN TOKEN</span>
           <span class="size"><span class="x-icon">&nbsp;</span><span name="number"></span></span>
         </p>
       </div>
@@ -49,30 +49,30 @@
   <script src="js/jquery-3.3.1.min.js"></script>
   <script src="js/index.js"></script>
   <script>
-    var size, color,order,choice_address;
-  
-$(function(){ 
-  init();
-  $("div[name='address-infor']").click(function () {
-      window.location.href = "address.html";
-    });
-    $(".back").click(function () {
-      window.location.href = "detail.html";
-    });
-    
-    $('.submit').click(function(){
-      var sendData = {
-        product_url:order.img,
-        business_name: order.business_name,
-        business_uid: order.business_uid,
-        business_url:  order.business_url,
-        product_name: order.title,
-        productnorms_model: order.productnorms_model[0].size,
-        productnorms_cmodel:order.productnorms_model[0].color,
-        product_number:  order.number,
-        productnorms_price: order.price,
-        address_id:choice_address.address_id,
-        user_uid:localStorage.getItem("uid")
+    var size, color, order, choice_address;
+
+    $(function () {
+      init();
+      $("div[name='address-infor']").click(function () {
+        window.location.href = "address.html";
+      });
+      $(".back").click(function () {
+        window.location.href = "detail.html";
+      });
+
+      $('.submit').click(function () {
+        var sendData = {
+          product_url: order.img,
+          business_name: order.business_name,
+          business_uid: order.business_uid,
+          business_url: order.business_url,
+          product_name: order.title,
+          productnorms_model: order.productnorms_model[0].size,
+          productnorms_cmodel: order.productnorms_model[0].color,
+          product_number: order.number,
+          productnorms_price: order.price,
+          address_id: choice_address.address_id,
+          user_uid: localStorage.getItem("uid")
         };
         $.ajax({
           type: 'POST',
@@ -81,14 +81,13 @@ $(function(){
           data: JSON.stringify(sendData),
           success: function (response) {
             var item = JSON.parse(response);
-            console.log(item)
             if (item.code == 200) {
               $.showDialog({
                 content: "提交订单成功",
                 type: "toast",
                 duration: 2000,
                 callback: function () {
-                //調用支付，成功后跳轉我的訂單，然後清空order
+                  //調用支付，成功后跳轉我的訂單，然後清空order
                   localStorage.removeItem("order");
                   window.location.href = "my-order.html";
                 }
@@ -114,23 +113,25 @@ $(function(){
             });
           }
         });
+      })
     })
-})
+
     function init() {
-       order = localStorage.getItem("order");
-       choice_address = localStorage.getItem("choice_address");
+      order = localStorage.getItem("order");
+      choice_address = localStorage.getItem("choice_address");
       if (order) {
         order = JSON.parse(order);
         if (typeof (order.productnorms_model[0].color) == 'undefined') {
-        order.productnorms_model[0].color = ''
+          order.productnorms_model[0].color = ''
         }
-      if (typeof (order.productnorms_model[0].size) == 'undefined') {
-        order.productnorms_model[0].size = ''
+        if (typeof (order.productnorms_model[0].size) == 'undefined') {
+          order.productnorms_model[0].size = ''
         }
         $("span[name='selectedPrice']").html(order.price);
         $("span[name='number']").html(order.number);
         $("p[name='productName']").html(order.title);
-        $("p[name='productName1']").html(order.productnorms_model[0].color + "&nbsp;&nbsp;" + order.productnorms_model[0].size);
+        $("p[name='productName1']").html(order.productnorms_model[0].color + "&nbsp;&nbsp;" + order.productnorms_model[
+          0].size);
         var imageUrl = order.img;
         if (imageUrl) {
           imageUrl = imageUrl.replace(/\\/g, "/");
@@ -140,13 +141,11 @@ $(function(){
       if (choice_address) {
         choice_address = JSON.parse(choice_address);
         $("span[name='addressName']").html(choice_address.name);
-              $("span[name='phoneNumber']").html(choice_address.phone);
-          $("p[name='detailAddress']").html(choice_address.address).css('padding-top','7px');
+        $("span[name='phoneNumber']").html(choice_address.phone);
+        $("p[name='detailAddress']").html(choice_address.address).css('padding-top', '7px');
       }
-      
-    }
 
-   
+    }
   </script>
 </body>
 

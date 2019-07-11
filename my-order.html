@@ -11,11 +11,10 @@
     body {
       background: #F5F5F5;
     }
-    
   </style>
 </head>
 
-<body  class="my-order">
+<body class="my-order">
   <div class="menu-fixed">
     <span class="back">
       &nbsp;</span>
@@ -24,17 +23,17 @@
     </div>
   </div>
   <div data-am-widget="tabs" class="am-tabs am-tabs1 am-tabs-d2 am-no-layout">
-  <ul class="am-tabs-nav am-cf">
-    <li class="am-active" data-code=''>全部</li>
-    <li class="" data-code='1'>待付款<span class="am-badge am-round1">1</span></li>
-    <li class="" data-code='2'>待收货<span class="am-badge am-round2">1</span></li>
-    <li class="" data-code='3'>已取消</li>
-    <li class="" data-code='4'>已完成</li>
-    <li class="" data-code='5'>退货</li>
-  </ul>
+    <ul class="am-tabs-nav am-cf">
+      <li class="am-active" data-code=''>全部</li>
+      <li class="" data-code='1'>待付款<span class="am-badge am-round1">1</span></li>
+      <li class="" data-code='2'>待收货<span class="am-badge am-round2">1</span></li>
+      <li class="" data-code='3'>已取消</li>
+      <li class="" data-code='4'>已完成</li>
+      <li class="" data-code='5'>退货</li>
+    </ul>
   </div>
   <div data-am-widget="tabs" class="am-tabs am-tabs2 am-tabs-d2 am-no-layout" style="padding-top: 100px">
-    
+
     <div class="mo_list am-margin-top-sm" style="position: relative;">
       <div name='product-list' style="padding-bottom: 60px;">
 
@@ -97,7 +96,6 @@
         if (e && e.target) {
           var event = e.target;
           search.order_state = $(event).data('code');
-          console.log(search)
           search.pager_offset = 0;
           search.product_name = $(event).html();
           $(event).siblings().each(function (index, item) {
@@ -106,13 +104,12 @@
           $(event).addClass("am-active");
           $("div[name='product-list']").html("");
           getPageList(search);
-         
+
         }
       });
       $(".back").click(function () {
-        console.log(132)
-      window.location.href = "index.html";
-    })
+        window.location.href = "index.html";
+      })
     })
 
     function getPageList() {
@@ -130,7 +127,6 @@
         data: JSON.stringify(params),
         success: function (response) {
           var item = JSON.parse(response);
-          console.log(item)
           var data = item.data.taobaoorderlist;
           loadItemComplete = true;
           if (item.code == 200) {
@@ -138,7 +134,7 @@
             $('.am-round2').html(item.data.count_state2)
             if (data && data.length > 0) {
               $(".order-no").hide();
-              if (data.length <4) {
+              if (data.length < 4) {
                 isEnd = true;
               }
               $.each(data, function (index, item) {
@@ -166,20 +162,20 @@
                   "<img src='' width='60' height='60'></div>" +
                   "<div class='t_name'>" + item.product_name + "</div>" +
                   " <div class='t_price'>" +
-                  "<p>￥&nbsp;" + item.productnorms_price + "</p>" +
+                  "<p>" + item.productnorms_price + "&nbsp;N TOKEN</p>" +
                   "<p class='t_price_num'>×" + item.product_number + "</p></div></li></ul>" +
                   "<div class='mo_total am-padding-xs'>" +
                   "<div class='am-padding-bottom'>" +
                   "<span class='mo_t_mun'>共计" + item.product_number + "件商品 合计： </span><span>" + item
-                  .product_number * item.productnorms_price + "</span>" +
+                  .product_number * item.productnorms_price + "&nbsp;N TOKEN</span>" +
                   " </div></div></div>"
                 )
               });
             } else {
-              console.log(search.pager_offset)
               if (search.pager_offset == 0) {
                 $(".order-no").show();
                 $('.loading-more1').hide()
+                $('.loading-more').hide()
               } else {
                 $(".order-no").hide();
                 $('.loading-more1').show()

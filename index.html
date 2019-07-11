@@ -175,13 +175,12 @@
           pageno: search.pager_offset
         },
         success: function (response) {
-          console.log(response.data)
           var data = response.data;
           loadItemComplete = true;
           if (data && data.length > 0) {
             $.each(data, function (index, item) {
               var imageUrl = item.pict_url;
-              var price = item.reserve_price ? '￥' + item.reserve_price + '.00' : "￥0.00";
+              var price = item.reserve_price ? item.reserve_price + 'N TOKEN' : "0 N TOKEN";
               if (imageUrl) {
                 imageUrl = imageUrl.replace(/\\/g, "/");
               }

@@ -41,33 +41,34 @@
   <script src="js/constants.js"></script>
   <script>
     var user_id;
-    var choice_address=[];
+    var choice_address = [];
     $(function () {
-      getUserId()
+      // getUserId()
       callbackUserId()
       $(".submit").click(function () {
-      window.location.href = "new-address.html?uid=" + user_id;
-    })
-    $("span[name='back']").click(function () {
-      window.location.href = "order.html";
-    })
+        window.location.href = "new-address.html?uid=" + user_id;
+      })
+      $("span[name='back']").click(function () {
+        window.location.href = "order.html";
+      })
       $("body").on("click", ".address-item", function () {
-        var address_id=$(this).data('id');
-       var name=$(this).find('.name1').html();
-       var phone=$(this).find('.phone').html();
-       var address=$(this).find('.address').html();
-       choice_address = {
-        id:address_id,
-        name: name,
-        phone: phone,
-        address: address
+        var address_id = $(this).data('id');
+        var name = $(this).find('.name1').html();
+        var phone = $(this).find('.phone').html();
+        var address = $(this).find('.address_detail').html();
+        choice_address = {
+          id: address_id,
+          name: name,
+          phone: phone,
+          address: address
         };
         localStorage.setItem("choice_address", JSON.stringify(choice_address));
-       window.location.href = "order.html";
+        window.location.href = "order.html";
       })
     })
 
     function callbackUserId(uid) {
+      uid=100161
       if (uid) {
         $.ajax({
           type: "POST",
@@ -82,17 +83,18 @@
             user_id = item.customer_id;
             if (item && item.data && item.data.length > 0) {
               for (var i = 0; i < item.data.length; i++) {
-                var _html = "<div class='address-item' data-id='"+item.data[i].address_id+"'>" +
+                var _html = "<div class='address-item' data-id='" + item.data[i].address_id + "'>" +
                   "<div class='address-item-left'>" +
-                  "<p class='name'><span class='name1'>" + item.data[i].address_linkman + "</span>&nbsp;&nbsp;<span class='phone'>" + item.data[i]
+                  "<p class='name'><span class='name1'>" + item.data[i].address_linkman +
+                  "</span>&nbsp;&nbsp;<span class='phone'>" + item.data[i]
                   .address_telphone +
                   "</span></p>" +
-                  " <div class='address'>";
+                  " <div class='address address_detail'>";
                 if (item.data[i].address_state == 1) {
-                  _html += "<span class='choice'>默认地址</span><span class='address'>";
+                  _html += "<span class='choice'>默认地址</span><span class='address address_detail'>";
                 }
                 _html += item.data[i].province + " " + item.data[i].city + " " +
-                  item.data[i].area + " " + item.data[i].address_address +"</span>"+
+                  item.data[i].area + " " + item.data[i].address_address + "</span>" +
                   "</div>" +
                   "</div>";
                 $("#address-list").append(_html)
@@ -103,7 +105,6 @@
       }
 
     }
-    
   </script>
 </body>
 
