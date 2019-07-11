@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>我的订单</title>
+  <link rel="stylesheet" href="css/index.css">
+  <style type="text/css">
+    body {
+      background: #F5F5F5;
+    }
+    
+  </style>
+</head>
+
+<body  class="my-order">
+  <div class="menu-fixed">
+    <span class="back">
+      &nbsp;</span>
+    <div class="search order">
+      我的订单
+    </div>
+  </div>
+  <div data-am-widget="tabs" class="am-tabs am-tabs1 am-tabs-d2 am-no-layout">
+  <ul class="am-tabs-nav am-cf">
+    <li class="am-active" data-code=''>全部</li>
+    <li class="" data-code='1'>待付款<span class="am-badge am-round1">1</span></li>
+    <li class="" data-code='2'>待收货<span class="am-badge am-round2">1</span></li>
+    <li class="" data-code='3'>已取消</li>
+    <li class="" data-code='4'>已完成</li>
+    <li class="" data-code='5'>退货</li>
+  </ul>
+  </div>
+  <div data-am-widget="tabs" class="am-tabs am-tabs2 am-tabs-d2 am-no-layout" style="padding-top: 100px">
+    
+    <div class="mo_list am-margin-top-sm" style="position: relative;">
+      <div name='product-list' style="padding-bottom: 60px;">
+
+      </div>
+      <div class="order-no">
+        <img src="./images/dingdan-no.png">
+      </div>
+      <div class="comment_nextpage loading-more" style="position: absolute;bottom:0rem;left: 35%;display:none">
+        <div class="weui-infinite-scroll" style="padding-bottom:12px;">
+          <img src="./images/loading.gif" style="vertical-align: middle">
+          正在加载...
+        </div>
+      </div>
+      <div class="comment_nextpage loading-more1" style="position: absolute;bottom:0rem;left: 35%;display: none">
+        <div class="weui-infinite-scroll" style="padding-bottom:12px;">
+          已经到底了
+        </div>
+      </div>
+      <div class="am-fr" id="page" style="font:12px/1.5 Arial;">
+      </div>
+    </div>
+  </div>
+  <script src="js/jquery-3.3.1.min.js"></script>
+  <script src="js/index.js"></script>
+  <script>
+    var loadMenuComplete = false;
+    var loadItemComplete = false;
+    var isEnd = false;
+    var search = {
+      pager_offset: 0,
+      order_state: "",
+    };
+    $(function () {
+      getPageList();
+      $(window).scroll(function (e) {
+        var scrollTop = $(window).scrollTop();
+        var documentHeight = $(document).height();
+        var windowHeight = $(window).height();
+
+        if ((scrollTop >= (documentHeight - windowHeight)) && scrollTop > 200) {
+          search.pager_offset += 4;
+          var active = $(".am-active");
+          if (active && active.length > 0 && active[0].dataset) {
+            search.order_state = active[0].dataset.code;
+          }
+          if (isEnd) {
+            $('.loading-more').hide()
+            $('.loading-more1').show()
+          } else {
+            $('.loading-more1').hide()
+            $('.loading-more').show()
+
+            getPageList(search);
+          }
+        }
+      });
+      $(".am-tabs-nav").click(function (e) {
+        $('.loading-more1').hide();
+        isEnd = false;
+        if (e && e.target) {
+          var event = e.target;
+          search.order_state = $(event).data('code');
+          console.log(search)
+          search.pager_offset = 0;
+          search.product_name = $(event).html();
+          $(event).siblings().each(function (index, item) {
+            $(item).removeClass("am-active");
+          });
+          $(event).addClass("am-active");
+          $("div[name='product-list']").html("");
+          getPageList(search);
+         
+        }
+      });
+      $(".back").click(function () {
+        console.log(132)
+      window.location.href = "index.html";
+    })
+    })
+
+    function getPageList() {
+      user_uid = localStorage.getItem("uid");
+      var params = {
+        order_state: search.order_state,
+        user_uid: user_uid,
+        pager_offset: search.pager_offset,
+        pager_openset: 4
+      }
+      $.ajax({
+        type: 'POST',
+        url: 'http://47.91.155.218:18080/mall/api/taobaoOrder/list',
+        contentType: "application/json;charset=UTF-8",
+        data: JSON.stringify(params),
+        success: function (response) {
+          var item = JSON.parse(response);
+          console.log(item)
+          var data = item.data.taobaoorderlist;
+          loadItemComplete = true;
+          if (item.code == 200) {
+            $('.am-round1').html(item.data.count_state1);
+            $('.am-round2').html(item.data.count_state2)
+            if (data && data.length > 0) {
+              $(".order-no").hide();
+              if (data.length <4) {
+                isEnd = true;
+              }
+              $.each(data, function (index, item) {
+                var order_state = item.order_state;
+                if (order_state == 1) {
+                  var orderState = '待付款';
+                } else if (order_state == 2) {
+                  var orderState = '待收货';
+                } else if (order_state == 3) {
+                  var orderState = '已取消';
+                } else if (order_state == 4) {
+                  var orderState = '已完成';
+                } else if (order_state == 5) {
+                  var orderState = '退货';
+                }
+                $("div[name='product-list']").append("<div class='box am-padding-xs am-margin-bottom-xs'>" +
+                  "<div class='mo_list_tit am-padding-xs'>" +
+                  "<div>" +
+                  "<a class='mine' href='javascript:void(0);'>" + item.business_name + "</a>" +
+                  "</div>" +
+                  "<div class='wait'>" + orderState +
+                  "</div>" +
+                  "</div>" +
+                  "<ul class=' am-padding-xs' id='order-lists'><li><div>" +
+                  "<img src='' width='60' height='60'></div>" +
+                  "<div class='t_name'>" + item.product_name + "</div>" +
+                  " <div class='t_price'>" +
+                  "<p>￥&nbsp;" + item.productnorms_price + "</p>" +
+                  "<p class='t_price_num'>×" + item.product_number + "</p></div></li></ul>" +
+                  "<div class='mo_total am-padding-xs'>" +
+                  "<div class='am-padding-bottom'>" +
+                  "<span class='mo_t_mun'>共计" + item.product_number + "件商品 合计： </span><span>" + item
+                  .product_number * item.productnorms_price + "</span>" +
+                  " </div></div></div>"
+                )
+              });
+            } else {
+              console.log(search.pager_offset)
+              if (search.pager_offset == 0) {
+                $(".order-no").show();
+                $('.loading-more1').hide()
+              } else {
+                $(".order-no").hide();
+                $('.loading-more1').show()
+                $('.loading-more').hide();
+              }
+
+              isEnd = true;
+            }
+          } else {
+            $.showDialog({
+              content: "获取订单失败",
+              type: "toast",
+              duration: 2000,
+              callback: function () {
+                // window.location.reload();
+              }
+            });
+
+          }
+
+        },
+        error: function () {
+          $.showDialog({
+            content: "系统繁忙，请稍后再试！",
+            type: "toast",
+            duration: 2000
+          });
+        }
+      });
+    }
+  </script>
+</body>
+
+</html>

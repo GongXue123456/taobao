@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>商品详情</title>
+  <link rel="stylesheet" href="css/index.css">
+  <link rel="stylesheet" href="css/swiper.min.css" />
+</head>
+
+<body>
+  <div class="menu-fixed">
+    <span class="back">
+      &nbsp;</span>
+    <div class="search order">
+      商品详情
+    </div>
+  </div>
+  <div class="container product-detail">
+    <div class="images">
+      <!--<img name="produtImage" src="" alt="">-->
+      <div class="swiper-container  swiper1 pt10 of">
+        <div class="swiper-wrapper" name='product-list'>
+        </div>
+        <div class="swiper-pagination" style="bottom: 5px;"></div>
+      </div>
+    </div>
+
+    <div class="infor">
+      <p name="productTitle"></p>
+      <p>商品价格: <span class="productPrice" name="productPrice"></span></p>
+      <p>库存: <span class="productNumber" name="productNumber1"></span></p>
+    </div>
+    <div class="options" id="selectOptions">
+      <span>选择 规格、数量 等</span><span class="icon"></span>
+    </div>
+    <div class="details">
+      <div class="title">商品详情</div>
+      <div class="detail" name="produtImage2">
+      </div>
+    </div>
+    <div class="action product-detail-bottom">
+      <input type="button" value="打开淘宝" class="taobao">
+      <input type="button" value="立即购买" class="buy" id="selectOptions1">
+    </div>
+    <div class="options-modal" id="optionsModal"></div>
+    <div class="options-detail" id="optionsDetail">
+      <div class="detail-infor">
+        <div class="img">
+          <img name="produtImage1" src="" alt="">
+        </div>
+        <div class="p-infor">
+          <p name="productTitle" class="infor-name"></p>
+          <p class="infor-price"><span>￥ </span><span class="price productPrice" name="seletPrice"></span> <span
+              class="balance">库存： <span name="productNumber"></span></span>
+          </p>
+        </div>
+        <div class="close" id="close"></div>
+      </div>
+      <div class="op-infor" name="op-infor">
+      </div>
+      <div class="numbers">
+        <p class="title">数量</p>
+        <div>
+          <input type="button" value=" " class="minus">
+          <input type="text" class="nums" name="number" value="1">
+          <input type="button" value=" " class="add">
+        </div>
+      </div>
+      <div class="action">
+        <input type="button" value="打开淘宝" class="taobao">
+        <input type="button" value="立即购买" class="buy" id="buy">
+      </div>
+    </div>
+  </div>
+  <script src="js/jquery-3.3.1.min.js"></script>
+  <script type="text/javascript" src="js/swiper.min.js"></script>
+  <script src="js/index.js"></script>
+  <script>
+    var order = {}
+    var aaa = "";
+    var numArr = [];
+    var arr, a0, a1, b0, b1, sku, detail_data, size, color;
+    $(function () {
+      localStorage.removeItem("order");
+      findByProduct();
+    })
+    $.getUrlParam = function (name) {
+      var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)");
+      var r = window.location.search.substr(1).match(reg);
+      if (r != null) return unescape(r[2]);
+      return null;
+    }
+    $(".back").click(function () {
+      window.location.href = "index.html";
+    });
+
+    $("#close").click(function () {
+      $(this).css("display", "none");
+      $("#optionsDetail").css("display", "none");
+      $("#optionsModal").css("display", "none");
+    });
+
+    $("#selectOptions,#selectOptions1").click(function () {
+      $("#close").css("display", "block");
+      $("#optionsDetail").css("display", "block");
+      $("#optionsModal").css("display", "block");
+    });
+    $("body").on("click", ".minus", function () {
+      var oldval = $("input[name='number']");
+      oldval.val(parseInt(oldval.val()) - 1);
+      if (oldval.val() <= 0) {
+        oldval.val(parseInt(oldval.val()) + 1);
+      }
+    })
+
+    $("body").on("click", ".add", function () {
+      var oldval = $("input[name='number']");
+      oldval.val(parseInt(oldval.val()) + 1);
+    })
+
+
+    function findByProduct() {
+      var params = {
+        product_code: $.getUrlParam('product_code'),
+        shoptype: $.getUrlParam('user_type')
+      }
+      console.log(params.product_code)
+      console.log(params.shoptype)
+      $.ajax({
+        type: "GET",
+        url: "http://47.99.93.123:9090/rest/tbk/goods/itemdetail",
+        dataType: "json",
+        data: {
+          para: params.product_code,
+          shoptype: params.shoptype == 0 ? 'C' : 'B',
+          moreinfo: 1,
+          needsku: 1,
+          onlydetail: 1,
+          onlyglobalinfo: 1
+        },
+        success: function (response) {
+          var item = response.data;
+          console.log(item)
+          detail_data = item;
+          if (item) {
+            order.product = item;
+            sku = item.sku;
+            var listData = item.sku.props;
+            for (var i = 0; i < listData.length; i++) {
+              var tmp = listData[i];
+              aaa += tmp.pid + ':' + tmp.values[0].vid + ';';
+            }
+            aaa = aaa.substring(0, aaa.length - 1);
+            arr = aaa.split(";");
+            console.log(aaa)
+            if (arr[0]) {
+              a0 = arr[0].split(":")[0];
+              a1 = arr[0].split(":")[1];
+            }
+            if (arr[1]) {
+              b0 = arr[1].split(":")[0];
+              b1 = arr[1].split(":")[1];
+            }
+            if (aaa == '') {
+              $("span[name='seletPrice']").html(item.sku.skuprice[0].price.priceText);
+              $("span[name='productNumber']").html(item.sku.skuprice[0].quantity);
+            }
+            for (var k = 0; k < item.sku.skulist.length; k++) {
+              if (item.sku.skulist[k].propPath == aaa) {
+                var skuId = item.sku.skulist[k].skuId;
+                $("span[name='seletPrice']").html(item.sku.skuprice[skuId].price.priceText);
+                $("span[name='productNumber']").html(item.sku.skuprice[skuId].quantity);
+              }
+            }
+            var imageUrl = item.images;
+            var price = item.zk_final_price ? '￥' + item.zk_final_price : "￥0.00";
+            if (imageUrl[0]) {
+              imageUrl[0] = imageUrl[0].replace(/\\/g, "/");
+              $("img[name=produtImage1]").attr("src", "https:" + imageUrl[0]);
+            }
+            $.each(imageUrl, function (index, item1) {
+              if (item1) {
+                item1 = item1.replace(/\\/g, "/");
+              }
+              $("div[name='product-list']").append("<div class='swiper-slide'><a href='javascript:;'>" +
+                "<img class='news-row-center'  src=" + "https:" + item1 + "></a></div>" +
+                "</div>");
+            })
+
+            var swiper = new Swiper('.swiper1', {
+              pagination: {
+                el: '.swiper-pagination',
+                clickable: true,
+              },
+              autoplay: {
+                delay: 2500,
+                disableOnInteraction: false,
+              },
+              loop: true
+            });
+            $("p[name=productTitle]").html(item.title);
+            $("span[name=productPrice]").html(price);
+            $("span[name=productNumber1]").html(sku.skuprice[0].quantity);
+
+            var itemStart = "<div class='op-item'>";
+            var items = ""
+            if (item.sku.props && item.sku.props.length > 0) {
+              item.sku.props.forEach(function (item1) {
+
+                items += "<div><div class='title'>" + item1.name + "</div>"
+                item1.values.forEach(function (item2) {
+                  items += "<span  data-pid='" + item1.pid + "' data-vid='" + item2.vid +
+                    "' data-name='" + item2.name + "'>" + item2
+                    .name + "</span>";
+                })
+                items += "</div>"
+              })
+            }
+            var itemEnd = "</div>";
+
+            $("div[name='op-infor']").append(itemStart + items + itemEnd);
+          }
+        }
+      });
+      $.ajax({
+        type: "GET",
+        url: "http://47.99.93.123:9090/rest/tbk/goods/itemdetail",
+        dataType: "json",
+        data: {
+          para: params.product_code,
+          shoptype: params.shoptype = 0 ? 'B' : 'c',
+        },
+        success: function (response) {
+          var item = response.data;
+          console.log(item)
+          if (item) {
+            var imageUrl = item.item_detail;
+            $.each(imageUrl, function (index, item) {
+              if (item) {
+                item = item.replace(/\\/g, "/");
+              }
+              $("div[name='produtImage2']").append("<img class='w100' src=" + item + ">");
+            })
+
+
+          }
+        }
+      });
+      $("div[name='op-infor']").click(function (e) {
+        if (e && e.target && e.target.dataset &&
+          e.target.dataset.vid) {
+          var number = $("input[name='number']").val();
+          var pid = e.target.dataset.pid;
+          var vid = e.target.dataset.vid;
+
+          if (aaa.indexOf(a0) > -1 && pid == a0) {
+            a1 = e.target.dataset.vid;
+            console.log(a1)
+            size = e.target.dataset.name
+          } else if (aaa.indexOf(b0) > -1 && pid == b0) {
+            b1 = e.target.dataset.vid;
+            console.log(b1)
+            color = e.target.dataset.name;
+          }
+          if (a0 == undefined || a1 == undefined) {
+            aaa = b0 + ':' + b1;
+          } else if (b0 == undefined || b1 == undefined) {
+            aaa = a0 + ':' + a1;
+          } else {
+            aaa = a0 + ':' + a1 + ';' + b0 + ':' + b1;
+          }
+
+
+          for (var k = 0; k < sku.skulist.length; k++) {
+            if (sku.skulist[k].propPath == aaa) {
+              var skuId = sku.skulist[k].skuId;
+              console.log(skuId)
+              $("span[name='seletPrice']").html(sku.skuprice[skuId].price.priceText);
+              $("span[name='productNumber']").html(sku.skuprice[skuId].quantity);
+            }
+          }
+          $(e.target).siblings().each(function (i, item) {
+            $(item).removeClass("active");
+          });
+          $(e.target).addClass("active");
+        }
+      });
+      $("body").on("click", "#buy", function () {
+        if (typeof (a0) == "undefined" && typeof (b0) == "undefined") {
+
+        } else if (typeof (a0) == "undefined" &&
+          typeof (b0) != "undefined") {
+          if (typeof (color) == 'undefined' || color == '') {
+            $.showDialog({
+              content: "请选择相应规格",
+              type: "toast",
+              duration: 2000,
+              okCallback: function () {}
+            });
+            return false;
+          }
+        } else if (typeof (b0) == "undefined" && typeof (a0) != "undefined") {
+
+          if (typeof (size) == 'undefined' || size == '') {
+            $.showDialog({
+              content: "请选择相应规格",
+              type: "toast",
+              duration: 2000,
+              okCallback: function () {}
+            });
+            return false;
+          }
+        } else {
+          if (typeof (size) == 'undefined' || typeof (color) == 'undefined') {
+            $.showDialog({
+              content: "请选择相应规格",
+              type: "toast",
+              duration: 2000,
+              okCallback: function () {}
+            });
+            return false;
+          }
+        }
+        var number = $("input[name='number']").val();
+        var price = $("span[name='seletPrice']").html().trim();
+        console.log(size)
+        console.log(color)
+        numArr = {
+          img: detail_data.images[0],
+          title: detail_data.title,
+          number: number,
+          price: price,
+          business_name: detail_data.seller.shopName,
+          business_uid: detail_data.seller.userId,
+          business_url: detail_data.seller.taoShopUrl,
+          productnorms_model: [{
+            size: size,
+            color: color,
+          }]
+
+        };
+        localStorage.setItem("order", JSON.stringify(numArr));
+
+        product_code = $.getUrlParam('product_code')
+        window.location.href = "order.html?product_code=" + product_code;
+      });
+
+      // $("input[name='number']").change(function () {
+      //   var number = $(this).val();
+      //   var price = order.selectedPrice;
+      //   var totalPrice = (parseFloat(number ? number : 0) * price ? price : 0);
+      //   $("span[name='seletPrice']").html(e.target.dataset.price);
+      // });
+    }
+  </script>
+</body>
+
+</html>

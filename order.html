@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>订单详情</title>
+  <link rel="stylesheet" href="css/index.css">
+</head>
+
+<body>
+  <div class="menu-fixed">
+    <span class="back">
+      &nbsp;</span>
+    <div class="search order">
+      订单详情
+    </div>
+  </div>
+  <div class="container order-detail">
+    <div class="address-infor" name="address-infor">
+      <div class="icon"></div>
+      <div class="address">
+        <p class="address-name">
+          <span name="addressName" class="addressName"></span>
+          <span name="phoneNumber"></span>
+        </p>
+        <p name="detailAddress">选择收货地址</p>
+      </div>
+    </div>
+    <div class="product-infor">
+      <div class="image">
+        <img src="" name="produtImage" alt="">
+      </div>
+      <div class="information">
+        <p name="productName"></p>
+        <p name="productName1"></p>
+        <p class="price-infor">
+          <span class="price">￥ <span name="selectedPrice"></span></span>
+          <span class="size"><span class="x-icon">&nbsp;</span><span name="number"></span></span>
+        </p>
+      </div>
+    </div>
+    <div class="balance">
+      <p>账户余额 <b>:</b> &nbsp;0</p>
+    </div>
+    <input type="button" class="submit" value="提交订单">
+  </div>
+  <script src="js/jquery-3.3.1.min.js"></script>
+  <script src="js/index.js"></script>
+  <script>
+    var size, color,order,choice_address;
+  
+$(function(){ 
+  init();
+  $("div[name='address-infor']").click(function () {
+      window.location.href = "address.html";
+    });
+    $(".back").click(function () {
+      window.location.href = "detail.html";
+    });
+    
+    $('.submit').click(function(){
+      var sendData = {
+        product_url:order.img,
+        business_name: order.business_name,
+        business_uid: order.business_uid,
+        business_url:  order.business_url,
+        product_name: order.title,
+        productnorms_model: order.productnorms_model[0].size,
+        productnorms_cmodel:order.productnorms_model[0].color,
+        product_number:  order.number,
+        productnorms_price: order.price,
+        address_id:choice_address.address_id,
+        user_uid:localStorage.getItem("uid")
+        };
+        $.ajax({
+          type: 'POST',
+          url: 'http://47.91.155.218:18080/mall/api/taobaoOrder/save',
+          contentType: "application/json;charset=UTF-8",
+          data: JSON.stringify(sendData),
+          success: function (response) {
+            var item = JSON.parse(response);
+            console.log(item)
+            if (item.code == 200) {
+              $.showDialog({
+                content: "提交订单成功",
+                type: "toast",
+                duration: 2000,
+                callback: function () {
+                //調用支付，成功后跳轉我的訂單，然後清空order
+                  localStorage.removeItem("order");
+                  window.location.href = "my-order.html";
+                }
+              });
+            } else {
+              $.showDialog({
+                content: "提交订单失败",
+                type: "toast",
+                duration: 2000,
+                callback: function () {
+                  // window.location.reload();
+                }
+              });
+
+            }
+
+          },
+          error: function () {
+            $.showDialog({
+              content: "系统繁忙，请稍后再试！",
+              type: "toast",
+              duration: 2000
+            });
+          }
+        });
+    })
+})
+    function init() {
+       order = localStorage.getItem("order");
+       choice_address = localStorage.getItem("choice_address");
+      if (order) {
+        order = JSON.parse(order);
+        if (typeof (order.productnorms_model[0].color) == 'undefined') {
+        order.productnorms_model[0].color = ''
+        }
+      if (typeof (order.productnorms_model[0].size) == 'undefined') {
+        order.productnorms_model[0].size = ''
+        }
+        $("span[name='selectedPrice']").html(order.price);
+        $("span[name='number']").html(order.number);
+        $("p[name='productName']").html(order.title);
+        $("p[name='productName1']").html(order.productnorms_model[0].color + "&nbsp;&nbsp;" + order.productnorms_model[0].size);
+        var imageUrl = order.img;
+        if (imageUrl) {
+          imageUrl = imageUrl.replace(/\\/g, "/");
+          $("img[name=produtImage]").attr("src", "https:" + imageUrl);
+        }
+      }
+      if (choice_address) {
+        choice_address = JSON.parse(choice_address);
+        $("span[name='addressName']").html(choice_address.name);
+              $("span[name='phoneNumber']").html(choice_address.phone);
+          $("p[name='detailAddress']").html(choice_address.address).css('padding-top','7px');
+      }
+      
+    }
+
+   
+  </script>
+</body>
+
+</html>

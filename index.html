@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+  <link rel="stylesheet" href="css/index.css">
+</head>
+
+<body>
+
+  <!-- <div class="loading" style="display: block;" id="loading"></div> -->
+  <div class="menu-fixed">
+    <span class="back">
+      &nbsp;</span>
+    <div class="search search-index">
+      <input type="text" placeholder="请输入信息" id="searchText">
+      <input type="button" value="搜索" id="search">
+    </div>
+  </div>
+  <div class="container-index">
+
+    <div class="menu">
+      <ul id="menu">
+      </ul>
+    </div>
+    <div class="container product-list" name="product-list">
+    </div>
+    <div class="comment_nextpage loading-more" style="position: absolute;bottom:0rem;left: 35%;">
+      <div class="weui-infinite-scroll" style="padding-bottom:12px;">
+        <img src="./images/loading.gif" style="vertical-align: middle">
+        正在加载...
+      </div>
+    </div>
+    <div class="comment_nextpage loading-more1" style="position: absolute;bottom:0rem;left: 35%;display: none">
+      <div class="weui-infinite-scroll" style="padding-bottom:12px;">
+        已经到底了
+      </div>
+    </div>
+  </div>
+  <script src="js/jquery-3.3.1.min.js"></script>
+  <script src="js/index.js"></script>
+  <script>
+    $(function () {
+      $.ajax({
+        type: "GET",
+        url: "http://47.99.93.123:9090/rest/tbk/goods/getCategory",
+        dataType: "json",
+        success: function (response) {
+          $("#menu").html("");
+          loadMenuComplete = true;
+          var data = response;
+          if (data && data.length > 0) {
+            var len = 1;
+            $("#menu").append("<li class='active'>全部</li>");
+            $.each(data, function (index, item) {
+              $("#menu").append("<li data-code='" + item.category_code + "'>" + item.cat_name + "</li>");
+              len++;
+            });
+
+            if (len > 7) {
+              $("#menu").css("width", len * 55 + "px");
+            } else {
+              $("#menu").css("width", "400px");
+            }
+
+            // checkIsLoading();
+          }
+        }
+      });
+      init();
+    })
+    var loadMenuComplete = false;
+    var loadItemComplete = false;
+    var isEnd = false;
+    var search = {
+      pager_offset: 1,
+      category_code: "",
+      product_name: "全部",
+    }
+
+    function checkIsLoading() {
+      // if (loadMenuComplete && loadItemComplete) {
+      //     $("#loading").css({ "display": "none" });
+      // }
+    }
+
+    function init() {
+      $("div[name='product-list']").html("");
+      getPageList();
+    }
+
+    $("#menu").click(function (e) {
+      if (e && e.target) {
+        $("#searchText").val("");
+        var event = e.target;
+        search.category_code = search.category_code ? search.category_code : "";
+        search.pager_offset = 1;
+        search.product_name = $(event).html();
+        $(event).siblings().each(function (index, item) {
+          $(item).removeClass("active");
+        });
+        $(event).addClass("active");
+        $("div[name='product-list']").html("");
+        getPageList(search);
+      }
+    });
+
+    $("#search").click(function () {
+      search.product_name = $("#searchText").val();
+      search.category_code = search.category_code ? search.category_code : "";
+      search.pager_offset = 1;
+      if (search.product_name == '') {
+        $.showDialog({
+          content: "请输入搜索内容",
+          type: "toast",
+          duration: 2000,
+          okCallback: function () {}
+        });
+        return false;
+      } else {
+        $("div[name='product-list']").html("");
+        getPageList(search);
+
+      }
+
+    });
+
+    $("div[name='product-list']").click(function (e) {
+      if (e && e.target) {
+        var target = e.target;
+        var product_code = 0;
+        if (target.dataset && target.dataset.code) {
+          product_code = target.dataset.code;
+          user_type = target.dataset.type;
+          window.location.href = "detail.html?product_code=" + product_code + "&user_type=" + user_type;
+        }
+
+      }
+    });
+
+    $(window).scroll(function (e) {
+      var scrollTop = $(window).scrollTop();
+      var documentHeight = $(document).height();
+      var windowHeight = $(window).height();
+
+      if ((scrollTop >= (documentHeight - windowHeight)) && scrollTop > 200) {
+        search.pager_offset += 1;
+        var active = $(".active");
+        if (active && active.length > 0 && active[0].dataset) {
+          search.category_code = active[0].dataset.code;
+        }
+
+        if (isEnd) {
+          $('.loading-more').hide()
+          $('.loading-more1').show()
+        } else {
+          $('.loading-more1').hide()
+          $('.loading-more').show()
+          getPageList(search);
+        }
+      }
+    });
+
+    function getPageList() {
+      $.ajax({
+        type: "GET",
+        url: "http://47.99.93.123:9090/rest/tbk/goods/sellerTbkList",
+        dataType: "json",
+        data: {
+          keyword: search.product_name,
+          pagesize: 20,
+          pageno: search.pager_offset
+        },
+        success: function (response) {
+          console.log(response.data)
+          var data = response.data;
+          loadItemComplete = true;
+          if (data && data.length > 0) {
+            $.each(data, function (index, item) {
+              var imageUrl = item.pict_url;
+              var price = item.reserve_price ? '￥' + item.reserve_price + '.00' : "￥0.00";
+              if (imageUrl) {
+                imageUrl = imageUrl.replace(/\\/g, "/");
+              }
+              $("div[name='product-list']").append("<div class='item' data-type='" + item.user_type +
+                "' data-code='" + item.num_iid +
+                "'>" +
+                "<img src=" + imageUrl + " data-type='" + item.user_type +
+                "' data-code='" + item.num_iid + "'>" +
+                "<div class='infor' data-type='" + item.user_type +
+                "' data-code='" + item.num_iid + "'>" +
+                "    <a href='#' class='desc' data-type='" + item.user_type +
+                "' data-code='" + item.num_iid + "'>" + item.title +
+                "</a>" +
+                "    <p class='price-infor' data-code='" + item.num_iid + "'>" +
+                "        <span class='price' data-code='" + item.num_iid + "'>" + price + "</span>" +
+                "        <span class='type tmall' data-code='" + item.num_iid + "'>&nbsp;</span>" +
+                "    </p>" +
+                "</div>" +
+                "</div>"
+              )
+            });
+
+            // checkIsLoading();
+          } else {
+            isEnd = true;
+          }
+        }
+      });
+    }
+  </script>
+</body>
+
+</html>
