@@ -99,6 +99,7 @@
         search.category_code = search.category_code ? search.category_code : "";
         search.pager_offset = 1;
         search.product_name = $(event).html();
+        console.log($(event).html())
         $(event).siblings().each(function (index, item) {
           $(item).removeClass("active");
         });

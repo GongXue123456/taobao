@@ -6,9 +6,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <title>我的订单</title>
-  <link rel="stylesheet" href="css/index.css">
+  <link rel="stylesheet" href="css/index1.css">
+  <link rel="stylesheet" href="http://at.alicdn.com/t/font_488112_jwsm2fctrw.css">
   <style type="text/css">
-    body {
+    body,
+    .head {
       background: #F5F5F5;
     }
   </style>
@@ -16,11 +18,12 @@
 
 <body class="my-order">
   <div class="menu-fixed">
-    <span class="back">
-      &nbsp;</span>
-    <div class="search order">
-      我的订单
-    </div>
+    <header class="head">
+      <div class="fanhui back">
+        <a href="javascript:;"><i class="iconfont icon-arrowleft cfff"></i></a>
+      </div>
+      <div class="span1 cfff">我的订单</div>
+    </header>
   </div>
   <div data-am-widget="tabs" class="am-tabs am-tabs1 am-tabs-d2 am-no-layout">
     <ul class="am-tabs-nav am-cf">
@@ -151,24 +154,31 @@
                   var orderState = '退货';
                 }
                 $("div[name='product-list']").append("<div class='box am-padding-xs am-margin-bottom-xs'>" +
-                  "<div class='mo_list_tit am-padding-xs'>" +
-                  "<div>" +
-                  "<a class='mine' href='javascript:void(0);'>" + item.business_name + "</a>" +
-                  "</div>" +
+                  "<div class='mo_list_tit'>" +
+                  "<a class='mine' href='javascript:void(0);'>订单编号：" + item.order_code + "</a>" +
                   "<div class='wait'>" + orderState +
                   "</div>" +
                   "</div>" +
-                  "<ul class=' am-padding-xs' id='order-lists'><li><div>" +
-                  "<img src='' width='60' height='60'></div>" +
-                  "<div class='t_name'>" + item.product_name + "</div>" +
-                  " <div class='t_price'>" +
-                  "<p>" + item.productnorms_price + "&nbsp;N TOKEN</p>" +
-                  "<p class='t_price_num'>×" + item.product_number + "</p></div></li></ul>" +
-                  "<div class='mo_total am-padding-xs'>" +
+                  "<ul class='' id='order-lists'><li><div>" +
+                  "<img src='https:" + item.product_url + "' width='60' height='60'></div>" +
+                  "<div class='t_name'>" + item.product_name +
+                  "<div class='t_price'>" +
+                  "<p>" + item.productnorms_price + "&nbsp;NTOKEN+" + item.productnorms_price +
+                  "&nbsp;NUSD</p>" +
+                  "</div>" +
+                  "</div>" +
+                  "</li></ul>" +
+
+                  "<div class='mo_total '>" +
                   "<div class='am-padding-bottom'>" +
                   "<span class='mo_t_mun'>共计" + item.product_number + "件商品 合计： </span><span>" + item
-                  .product_number * item.productnorms_price + "&nbsp;N TOKEN</span>" +
-                  " </div></div></div>"
+                  .product_number * item.productnorms_price + "&nbsp;NTOKEN+" + item
+                  .product_number * item.productnorms_price + "&nbsp;NUSD</span>" +
+                  " </div>" +
+                  "<div class = 'am-padding-bottom mt5' > " +
+                  "<span class='mo_t_mun'>购物手续费：" + item.productnorms_price + "&nbsp;NINECOIN</span>" +
+                  "</div>" +
+                  "</div></div>"
                 )
               });
             } else {
