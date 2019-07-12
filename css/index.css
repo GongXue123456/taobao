@@ -263,20 +263,28 @@ a {
 .container.order-detail .address-infor {
   background: #fff;
   display: flex;
-  padding: 10px 0px;
 }
 
 .container.order-detail .address-infor .icon {
-  height: 78px;
-  width: 78px;
+  height: 3.038rem;
+  width:3.038rem;
   display: inline-block;
   text-align: center;
-  line-height: 78px;
+  line-height: 3.038rem;
   vertical-align: top;
-  background: url(../images/location.png) no-repeat center;
-  background-size: 40px;
+  color: #fff;
 }
-
+.container.order-detail .address-infor .icon i{
+  padding: 4px;
+    font-size: 23px;
+    border-radius: 50%;
+}
+.container.order-detail .address-infor .rigth_btn{
+  height: 3.038rem;
+  line-height: 3.038rem;
+  position: absolute;
+  right: 10px;
+}
 .address-infor .addressName {
   margin-right: 10px;
 }
@@ -290,37 +298,45 @@ a {
 }
 
 .container.order-detail .product-infor {
-  height: 120px;
+  /* height: 120px; */
   width: 100%;
   background: #fff;
   margin-top: 20px;
   position: relative;
+  padding:15px 10px;
+  display: flex;
 }
 
 .container.order-detail .product-infor .image {
-  height: 120px;
-  width: 100px;
   display: inline-block;
   text-align: center;
   vertical-align: top;
 }
 
 .container.order-detail .product-infor .image>img {
-  width: 80px;
-  height: 80px;
-  margin-top: 18px;
+  width: 3.906rem;
+  height: 3.906rem;
+  /* margin-top: 18px; */
 }
 
 .container.order-detail .product-infor .information {
   width: calc(100% - 108px);
-  padding: 20px 0px;
+  font-size: 0.6076rem;
+  display: inline-block;
+}
+.container.order-detail .options {
+  width: 100%;
+  height: 40px;
+  background: #fff;
+  line-height: 42px;
+  padding: 0 10px;
+  font-size: 0.6076rem;
   display: inline-block;
 }
 
-
 .container.order-detail .product-infor .information .price-infor .price {
   float: left;
-  color: #f40;
+  font-size: 0.55rem;
 }
 
 .container.order-detail .product-infor .information .price-infor .size {
@@ -344,6 +360,7 @@ a {
   background: #fff;
   margin-top: 20px;
   line-height: 40px;
+  font-size: 0.6076rem;
 }
 
 .container.order-detail .balance p {
@@ -354,14 +371,17 @@ a {
 .container.order-detail .submit,
 .container.address-list .submit,
 .container.new-address .submit {
-  width: 100%;
+  width: 90%;
   height: 50px;
   border: 0;
   background: #3D4751;
-  color: rgb(8, 190, 214);
+  color: #fff;
   position: fixed;
-  bottom: 0;
+  bottom: 10px;
   outline: none;
+  background-color: white;
+  left: 5%;
+  border-radius: 40px;
 }
 
 .container.product-detail {

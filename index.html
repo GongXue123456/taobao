@@ -6,31 +6,89 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <title>Document</title>
-  <link rel="stylesheet" href="css/index.css">
+  <link rel="stylesheet" href="css/weui.min.css">
+  <link rel="stylesheet" href="css/jquery-weui.min.css">
+  <link rel="stylesheet" href="css/swiper.min.css">
+  <link rel="stylesheet" href="css/index1.css">
+  <link rel="stylesheet" href="http://at.alicdn.com/t/font_488112_jwsm2fctrw.css">
+ 
 </head>
 
-<body>
+<body class="shop_index">
+  <div class="menu-fixed taobao_shop">
+    <header class="head bgc-t">
+      <div class="fanhui">
+        <a href="javascript:;"><img src="images/back.png"></a>
+      </div>
+      <div class="span1 c000">淘宝</div>
+      <div class="gengduo">
+        <i class="iconfont icon-person_line"></i>
+      </div>
 
-  <!-- <div class="loading" style="display: block;" id="loading"></div> -->
-  <div class="menu-fixed">
-    <span class="back">
-      &nbsp;</span>
-    <div class="search search-index">
-      <input type="text" placeholder="请输入信息" id="searchText">
-      <input type="button" value="搜索" id="search">
+    </header>
+    <div class="weui_search_bar bgc-t" id="search_bar">
+      <form class="weui_search_outer">
+        <div class="weui_search_inner">
+          <i class="weui_icon_search"></i>
+          <input type="search" class="weui_search_input" id="search_input" placeholder="商品名称" required />
+          <a href="javascript:" class="weui_icon_clear" id="search_clear"></a>
+        </div>
+        <label for="search_input" class="weui_search_text" id="search_text">
+          <i class="weui_icon_search"></i>
+          <span>商品名称</span>
+        </label>
+      </form>
+      <a href="javascript:" class="weui_search_ok" id="search">查询</a>
+    </div>
+    <div class="swiper-container  swiper1">
+      <div class="swiper-wrapper">
+        <div class='swiper-slide'>
+          <a href='javascript:;'>
+            <img class='news-row-center' src="  ">
+          </a>
+        </div>
+
+      </div>
+      <div class="swiper-pagination" style="bottom: 5px;"></div>
+    </div>
+    <div class="swiper-container  swiper2 bcfff">
+      <div class="swiper-wrapper">
+        <div class='swiper-slide'>
+          <div class="weui-row" id="menu">
+
+          </div>
+        </div>
+        <div class='swiper-slide'>
+          <div class="weui-row" id="menu1">
+
+          </div>
+        </div>
+
+      </div>
+    </div>
+    <div class="goods-search-list-nav">
+      <ul id="nav_ul">
+        <li><a href="javascript:void(0);" class="choice_unit current posr" id="sort_default">综合<span class="bottom" data-name=""></span></a></li>
+        <li><a href="javascript:void(0);" class="choice_unit posr" id="search_adv">销量<span class="top" data-name="total_sales_asc">234</span><span data-name="total_sales_des" class="bottom"></span></a></li>
+        <li><a href="javascript:void(0);" class="choice_unit posr" id="price">价格<span class="top" data-name="price_asc"></span><span class="bottom" data-name="price_des"></span></a></li>
+      </ul>
+      <div class="browse-mode"><a href="javascript:void(0);" id="show_style"><span class="browse-list"></span></a></div>
+
     </div>
   </div>
-  <div class="container-index">
-
-    <div class="menu">
-      <ul id="menu">
-      </ul>
-    </div>
+  
+  <div class="container-index posr">
+      <div style="background-color: #f5f5f5;height:10px;width:100%;"></div>
+    <!-- <div class="menu">
+            <ul id="menu">
+            </ul>
+        </div> -->
     <div class="container product-list" name="product-list">
+
     </div>
     <div class="comment_nextpage loading-more" style="position: absolute;bottom:0rem;left: 35%;">
       <div class="weui-infinite-scroll" style="padding-bottom:12px;">
-        <img src="./images/loading.gif" style="vertical-align: middle">
+        <img src="./images/loading.gif" style="vertical-align: middle;width: initial">
         正在加载...
       </div>
     </div>
@@ -41,8 +99,19 @@
     </div>
   </div>
   <script src="js/jquery-3.3.1.min.js"></script>
+  <script src="js/swiper.min.js"></script>
+  <script src="js/jquery-weui.min.js"></script>
   <script src="js/index.js"></script>
-  <script>
+  <script type="text/javascript">
+    var loadMenuComplete = false;
+    var loadItemComplete = false;
+    var isEnd = false;
+    var search = {
+      pager_offset: 1,
+      category_code: "",
+      product_name: "全部",
+      sort:''
+    }
     $(function () {
       $.ajax({
         type: "GET",
@@ -53,65 +122,71 @@
           loadMenuComplete = true;
           var data = response;
           if (data && data.length > 0) {
-            var len = 1;
-            $("#menu").append("<li class='active'>全部</li>");
-            $.each(data, function (index, item) {
-              $("#menu").append("<li data-code='" + item.category_code + "'>" + item.cat_name + "</li>");
-              len++;
+            console.log(data.slice(0, 10))
+            var data1 = data.slice(0, 10)
+            var data2 = data.slice(10, data.length)
+            // $("#menu1").append("<li class='active'>全部</li>");
+            $.each(data1, function (index, item) {
+              $("#menu").append("<div class='weui-col-20' data-test='" + item.cat_name + "' data-code='" +
+                item.category_code +
+                "'><img src='" +
+                item.cat_icon + "'><span>" + item.cat_name + "</span></div>");
             });
-
-            if (len > 7) {
-              $("#menu").css("width", len * 55 + "px");
-            } else {
-              $("#menu").css("width", "400px");
-            }
-
-            // checkIsLoading();
+            $.each(data2, function (index, item) {
+              $("#menu1").append("<div class='weui-col-20' data-test='" + item.cat_name + "' data-code='" + item.category_code +
+                "'><img src='" +
+                item.cat_icon + "'>" + item.cat_name + "</div>");
+            });
+            $("#menu .weui-col-20,#menu1 .weui-col-20").click(function (e) {
+              if (e && e.target) {
+                $("#search_input").val("");
+                var event = e.target;
+                search.category_code = search.category_code ? search.category_code : "";
+                search.sort=search.sort ? search.sort : "";
+                search.pager_offset = 1;
+                search.product_name = $(this).data('test');
+                $("div[name='product-list']").html("");
+                getPageList(search);
+              }
+            });
           }
         }
       });
       init();
     })
-    var loadMenuComplete = false;
-    var loadItemComplete = false;
-    var isEnd = false;
-    var search = {
-      pager_offset: 1,
-      category_code: "",
-      product_name: "全部",
-    }
 
-    function checkIsLoading() {
-      // if (loadMenuComplete && loadItemComplete) {
-      //     $("#loading").css({ "display": "none" });
-      // }
-    }
 
     function init() {
       $("div[name='product-list']").html("");
       getPageList();
     }
-
-    $("#menu").click(function (e) {
-      if (e && e.target) {
-        $("#searchText").val("");
-        var event = e.target;
-        search.category_code = search.category_code ? search.category_code : "";
-        search.pager_offset = 1;
-        search.product_name = $(event).html();
-        console.log($(event).html())
-        $(event).siblings().each(function (index, item) {
-          $(item).removeClass("active");
-        });
-        $(event).addClass("active");
-        $("div[name='product-list']").html("");
-        getPageList(search);
-      }
-    });
-
-    $("#search").click(function () {
-      search.product_name = $("#searchText").val();
+    $("body").on("click", "#nav_ul li", function () {
+      console.log(110)
+      $('#nav_ul li').find('.choice_unit').removeClass("current");
       search.category_code = search.category_code ? search.category_code : "";
+      search.product_name = search.product_name ? search.product_name : "";
+                search.pager_offset = 1;
+      $(this).find('.choice_unit').addClass("current");
+      if( $(this).find('span.top').hasClass('current')){
+        $('#nav_ul li span.top,#nav_ul li span.bottom').removeClass("current");
+         $(this).find('span.bottom').addClass("current").siblings().removeClass("current");
+        var  aaa=$(this).find('span.bottom').data('name');
+        search.sort = $(this).find('span.bottom').data('name');
+        console.log(aaa)
+      }else{
+        $('#nav_ul li span.top,#nav_ul li span.bottom').removeClass("current");
+         $(this).find('span.top').addClass("current").siblings().removeClass("current");
+          search.sort = $(this).find('span.top').data('name');
+      }
+      $("div[name='product-list']").html("");
+                getPageList(search);
+  
+})
+    $("#search").click(function () {
+      search.product_name = $("#search_input").val();
+      console.log($("#search_input").val())
+      search.category_code = search.category_code ? search.category_code : "";
+      search.sort=search.sort ? search.sort : "";
       search.pager_offset = 1;
       if (search.product_name == '') {
         $.showDialog({
@@ -128,7 +203,6 @@
       }
 
     });
-
     $("div[name='product-list']").click(function (e) {
       if (e && e.target) {
         var target = e.target;
@@ -141,13 +215,11 @@
 
       }
     });
-
     $(window).scroll(function (e) {
       var scrollTop = $(window).scrollTop();
       var documentHeight = $(document).height();
       var windowHeight = $(window).height();
-
-      if ((scrollTop >= (documentHeight - windowHeight)) && scrollTop > 200) {
+      if ((scrollTop >= (documentHeight - windowHeight)) && scrollTop > 550) {
         search.pager_offset += 1;
         var active = $(".active");
         if (active && active.length > 0 && active[0].dataset) {
@@ -173,7 +245,8 @@
         data: {
           keyword: search.product_name,
           pagesize: 20,
-          pageno: search.pager_offset
+          pageno: search.pager_offset,
+          sort:search.sort
         },
         success: function (response) {
           var data = response.data;
@@ -181,36 +254,65 @@
           if (data && data.length > 0) {
             $.each(data, function (index, item) {
               var imageUrl = item.pict_url;
-              var price = item.reserve_price ? item.reserve_price + 'N TOKEN' : "0 N TOKEN";
+              var price = item.reserve_price ? item.reserve_price + '' : "0";
               if (imageUrl) {
                 imageUrl = imageUrl.replace(/\\/g, "/");
               }
-              $("div[name='product-list']").append("<div class='item' data-type='" + item.user_type +
+              $("div[name='product-list']").append("<div class='items' data-type='" + item.user_type +
                 "' data-code='" + item.num_iid +
                 "'>" +
                 "<img src=" + imageUrl + " data-type='" + item.user_type +
                 "' data-code='" + item.num_iid + "'>" +
-                "<div class='infor' data-type='" + item.user_type +
+                "<div class='infor posr' data-type='" + item.user_type +
                 "' data-code='" + item.num_iid + "'>" +
                 "    <a href='#' class='desc' data-type='" + item.user_type +
                 "' data-code='" + item.num_iid + "'>" + item.title +
                 "</a>" +
-                "    <p class='price-infor' data-code='" + item.num_iid + "'>" +
-                "        <span class='price' data-code='" + item.num_iid + "'>" + price + "</span>" +
-                "        <span class='type tmall' data-code='" + item.num_iid + "'>&nbsp;</span>" +
-                "    </p>" +
+                "<p class='price-infor' data-code='" + item.num_iid + "'>" +
+                "<span class='price' data-code='" + item.num_iid + "'>" + price +
+                "</span><span class='price-unit'>NTOKEN/NUSD</span>" +
+                "<span class='type tmall' data-code='" + item.num_iid + "'>&nbsp;</span>" +
+                "<span class=' tsales'>已售&nbsp;"+item.volume+"</span>" +
+                "</p>" +
+                "<div class='coupon-infor fs'>50%积分回馈，相当于5折消费</div>" +
                 "</div>" +
                 "</div>"
               )
             });
+            if ($('#show_style').find('span').hasClass('browse-list')) {
+              $('.product-list').find('.items').removeClass('item1').addClass('item')
+            } else {
+              $('.product-list').find('.items').removeClass('item').addClass('item1')
+            }
+            $("body").on("click", "#show_style .browse-list", function () {
+              $(this).removeClass('browse-list').addClass('browse-grid')
+              $('.product-list').find('.items').removeClass('item').addClass('item1')
 
-            // checkIsLoading();
+            });
+            $("body").on("click", "#show_style .browse-grid", function () {
+              $(this).removeClass('browse-grid').addClass('browse-list')
+              $('.product-list').find('.items').removeClass('item1').addClass('item')
+            })
           } else {
             isEnd = true;
           }
         }
       });
     }
+    var swiper = new Swiper('.swiper1', {
+      pagination: {
+        el: '.swiper-pagination',
+        clickable: true,
+      },
+      autoplay: {
+        delay: 2500,
+        disableOnInteraction: false,
+      },
+      loop: true
+    });
+    var swiper = new Swiper('.swiper2', {
+
+    });
   </script>
 </body>
 

@@ -163,7 +163,7 @@
                   "<img src='https:" + item.product_url + "' width='60' height='60'></div>" +
                   "<div class='t_name'>" + item.product_name +
                   "<div class='t_price'>" +
-                  "<p>" + item.productnorms_price + "&nbsp;NTOKEN+" + item.productnorms_price +
+                  "<p>" + item.ntoken + "&nbsp;NTOKEN+" + item.nusd +
                   "&nbsp;NUSD</p>" +
                   "</div>" +
                   "</div>" +
@@ -171,12 +171,10 @@
 
                   "<div class='mo_total '>" +
                   "<div class='am-padding-bottom'>" +
-                  "<span class='mo_t_mun'>共计" + item.product_number + "件商品 合计： </span><span>" + item
-                  .product_number * item.productnorms_price + "&nbsp;NTOKEN+" + item
-                  .product_number * item.productnorms_price + "&nbsp;NUSD</span>" +
+                  "<span class='mo_t_mun'>共计" + item.product_number + "件商品 合计： </span><span>" +  item.ntoken + "&nbsp;NTOKEN+" + item.nusd + "&nbsp;NUSD</span>" +
                   " </div>" +
                   "<div class = 'am-padding-bottom mt5' > " +
-                  "<span class='mo_t_mun'>购物手续费：" + item.productnorms_price + "&nbsp;NINECOIN</span>" +
+                  "<span class='mo_t_mun'>购物手续费：" + item.tip_money + "&nbsp;NINECOIN</span>" +
                   "</div>" +
                   "</div></div>"
                 )

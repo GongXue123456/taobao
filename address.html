@@ -5,18 +5,23 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
-  <title>Document</title>
-  <link rel="stylesheet" href="css/index.css">
+  <title>地址选择</title>
+  <link rel="stylesheet" href="css/index1.css">
+  <link rel="stylesheet" href="http://at.alicdn.com/t/font_488112_jwsm2fctrw.css">
+  <style type="text/css">
+  
+  </style>
 </head>
 
-<body>
-  <div class="menu-fixed">
-    <span class="back" name="back">
-      &nbsp;</span>
-    <div class="search order">
-      地址选择
-    </div>
-  </div>
+<body class="bcfff">
+    <div class="menu-fixed line-bottom">
+        <header class="head bcfff">
+          <div class="fanhui back" name="back">
+            <a href="javascript:;"><i class="iconfont icon-arrowleft cfff"></i></a>
+          </div>
+          <div class="span1 cfff">地址选择</div>
+        </header>
+      </div>
   <div class="container address-list">
     <div name="address-list" id="address-list">
       <!-- <div class='address-item'>
@@ -34,8 +39,7 @@
         </div>
       </div> -->
     </div>
-
-    <input type="button" class="submit" value="添加收货地址">
+    <div class="submit-btn w100 bcfff"><input type="button" class="submit general-bgc" value="添加收货地址" /></div>
   </div>
   <script src="js/jquery-3.3.1.min.js"></script>
   <script src="js/constants.js"></script>
@@ -48,7 +52,7 @@
       $(".submit").click(function () {
         window.location.href = "new-address.html?uid=" + user_id;
       })
-      $("span[name='back']").click(function () {
+      $("div[name='back']").click(function () {
         window.location.href = "order.html";
       })
       $("body").on("click", ".address-item", function () {
@@ -83,7 +87,7 @@
             user_id = item.customer_id;
             if (item && item.data && item.data.length > 0) {
               for (var i = 0; i < item.data.length; i++) {
-                var _html = "<div class='address-item' data-id='" + item.data[i].address_id + "'>" +
+                var _html = "<div class='address-item  line-bottom' data-id='" + item.data[i].address_id + "'>" +
                   "<div class='address-item-left'>" +
                   "<p class='name'><span class='name1'>" + item.data[i].address_linkman +
                   "</span>&nbsp;&nbsp;<span class='phone'>" + item.data[i]

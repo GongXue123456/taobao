@@ -6,25 +6,22 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <title>商品详情</title>
-  <link rel="stylesheet" href="css/index1.css">
+  <link rel="stylesheet" href="css/index.css">
   <link rel="stylesheet" href="css/swiper.min.css" />
 </head>
 
 <body>
-  <!-- <div class="menu-fixed">
+  <div class="menu-fixed">
     <span class="back">
       &nbsp;</span>
     <div class="search order">
       商品详情
     </div>
-  </div> -->
-  
-  <div class="container product-detail posr">
-        <span class="back">
-                &nbsp;</span>
+  </div>
+  <div class="container product-detail">
     <div class="images">
       <!--<img name="produtImage" src="" alt="">-->
-      <div class="swiper-container  swiper_detail pt10 of">
+      <div class="swiper-container  swiper1 pt10 of">
         <div class="swiper-wrapper" name='product-list'>
         </div>
         <div class="swiper-pagination" style="bottom: 5px;"></div>
@@ -32,8 +29,8 @@
     </div>
 
     <div class="infor">
-      <p name="productTitle" class="productTitle"></p>
-      <p><span class="productPrice" name="productPrice"></span>NTOKEN/NUSD</p>
+      <p name="productTitle"></p>
+      <p>商品价格: <span class="productPrice" name="productPrice"></span></p>
       <p>库存: <span class="productNumber" name="productNumber1"></span></p>
     </div>
     <div class="options" id="selectOptions">
@@ -45,8 +42,8 @@
       </div>
     </div>
     <div class="action product-detail-bottom">
-      <!-- <input type="button" value="打开淘宝" class="taobao"> -->
-      <input type="button" value="立即购买" class="buy general-bgc" id="selectOptions1">
+      <input type="button" value="打开淘宝" class="taobao">
+      <input type="button" value="立即购买" class="buy" id="selectOptions1">
     </div>
     <div class="options-modal" id="optionsModal"></div>
     <div class="options-detail" id="optionsDetail">
@@ -55,8 +52,8 @@
           <img name="produtImage1" src="" alt="">
         </div>
         <div class="p-infor">
-          <p name="productTitle" class="infor-name productTitle"></p>
-          <p class="infor-price"><span class="price productPrice" name="seletPrice"></span>NTOKEN/NUSD
+          <p name="productTitle" class="infor-name"></p>
+          <p class="infor-price"><span class="price productPrice" name="seletPrice"></span><span>&nbsp;N TOKEN</span>
             <span class="balance">库存： <span name="productNumber"></span></span>
           </p>
         </div>
@@ -65,16 +62,16 @@
       <div class="op-infor" name="op-infor">
       </div>
       <div class="numbers">
-        <p class="title disib mr10">数量</p>
-        <div class="disib">
+        <p class="title">数量</p>
+        <div>
           <input type="button" value=" " class="minus">
           <input type="text" class="nums" name="number" value="1">
           <input type="button" value=" " class="add">
         </div>
       </div>
       <div class="action">
-        <!-- <input type="button" value="打开淘宝" class="taobao"> -->
-        <input type="button" value="立即购买" class="buy general-bgc" id="buy">
+        <input type="button" value="打开淘宝" class="taobao">
+        <input type="button" value="立即购买" class="buy" id="buy">
       </div>
     </div>
   </div>
@@ -175,7 +172,7 @@
               }
             }
             var imageUrl = item.images;
-            var price = item.zk_final_price ? item.zk_final_price : "0";
+            var price = item.zk_final_price ? item.zk_final_price + " N TOKEN" : "0 N TOKEN";
             if (imageUrl[0]) {
               imageUrl[0] = imageUrl[0].replace(/\\/g, "/");
               $("img[name=produtImage1]").attr("src", "https:" + imageUrl[0]);
@@ -189,7 +186,7 @@
                 "</div>");
             })
 
-            var swiper = new Swiper('.swiper_detail', {
+            var swiper = new Swiper('.swiper1', {
               pagination: {
                 el: '.swiper-pagination',
                 clickable: true,

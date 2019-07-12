@@ -5,52 +5,129 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
-  <title>订单详情</title>
-  <link rel="stylesheet" href="css/index.css">
+  <title>确认订单</title>
+  <!-- <link rel="stylesheet" href="css/index.css"> -->
+  <link rel="stylesheet" href="css/index1.css">
+  <link rel="stylesheet" href="http://at.alicdn.com/t/font_488112_jwsm2fctrw.css">
+  <style>
+
+  </style>
 </head>
 
-<body>
-  <div class="menu-fixed">
-    <span class="back">
-      &nbsp;</span>
-    <div class="search order">
-      订单详情
-    </div>
-  </div>
-  <div class="container order-detail">
+<body class="confirm_order">
+    <div class="menu-fixed">
+        <header class="head">
+          <div class="fanhui back">
+            <a href="javascript:;"><i class="iconfont icon-arrowleft cfff"></i></a>
+          </div>
+          <div class="span1 cfff">确认订单</div>
+        </header>
+      </div>
+  <div class="container order-detail" >
     <div class="address-infor" name="address-infor">
-      <div class="icon"></div>
+      <div class="icon  "><i class="iconfont icon-map_line- general-bgc"></i></div>
       <div class="address">
         <p class="address-name">
           <span name="addressName" class="addressName"></span>
-          <span name="phoneNumber"></span>
+          <span name="phoneNumber" class="phoneNumber"></span>
         </p>
-        <p name="detailAddress">选择收货地址</p>
+        <p name="detailAddress" class="detailAddress">选择收货地址</p>
       </div>
+      <div class="rigth_btn disib"><i class="iconfont icon-arrowright c666"></i></div>
     </div>
     <div class="product-infor">
-      <div class="image">
+      <div class="image mr10">
         <img src="" name="produtImage" alt="">
       </div>
       <div class="information">
         <p name="productName"></p>
-        <p name="productName1"></p>
+        <!-- <p name="productName1"></p> -->
         <p class="price-infor">
-          <span class="price"><span name="selectedPrice"></span>&nbspN TOKEN</span>
-          <span class="size"><span class="x-icon">&nbsp;</span><span name="number"></span></span>
+          <span class="price"><span name="selectedPrice" class="selectedPrice general-color"></span>&nbspN TOKEN</span>
+          <!-- <span class="size"><span class="x-icon">&nbsp;</span></span> -->
         </p>
       </div>
     </div>
-    <div class="balance">
-      <p>账户余额 <b>:</b> &nbsp;0</p>
+    <div class="options" id="selectOptions">
+      <span>规格</span><span class="icon fr " name="color_size"></span>
     </div>
-    <input type="button" class="submit" value="提交订单">
+    <div class="options line-bottom" id="selectOptions">
+      <span>数量</span>
+      <div class="disib icon fr">
+        <input type="button" value=" " class="minus">
+        <input type="text" class="nums" name="number" value="1">
+        <input type="button" value=" " class="add">
+      </div>
+    </div>
+    <div class="options" id="selectOptions">
+      <span>NToken</span><span class="icon fr general-color" name="NToken">0</span>
+    </div>
+    <div class="options" id="selectOptions">
+      <span>NUSD</span><span class="icon fr general-color" name="NUSD">0</span>
+    </div>
+    <div class="bcfff confirm_order_progress" id="">
+      <div>NUSD支付比例(最低10%)</div>
+      <div class="progress">
+        <div class="text tc">10%</div>
+        <div class="progress_bg">
+          <div class="progress_bar"></div>
+        </div>
+        <div class="progress_btn"></div>
+
+      </div>
+    </div>
+    <div class="options" id="selectOptions">
+        <span>购物手续费(NINECOIN)</span><span class="icon fr general-color" name="tip_money">5.00</span>
+      </div>
+    <!-- <div class="balance">
+      <p>账户余额 <b>:</b> &nbsp;0</p>
+    </div> -->
+    <div class="submit-btn w100 bcfff"><input type="button" class="submit general-bgc" value="提交订单" /></div>
   </div>
   <script src="js/jquery-3.3.1.min.js"></script>
   <script src="js/index.js"></script>
   <script>
-    var size, color, order, choice_address;
-
+    var size, color, order, choice_address, a1, a2, number_val;
+    var x1, y1, oldTime, newTime, olfLeft, newLeft;
+    var per = 0.10;
+    var width = document.querySelector('.progress').offsetWidth;
+    olfLeft = width * 0.1;
+    document.querySelector('.progress_bar').style.width = olfLeft + "px";
+    document.querySelector('.progress_btn').style.left = (olfLeft - (olfLeft > (width - 10) ? 10 : 5)) + "px";
+    var touch = document.querySelector('.progress_btn');
+    touch.addEventListener("touchstart", handleStart, false);
+    touch.addEventListener("touchmove", handleMove, false);
+    touch.addEventListener("touchend", handleEnd, false);
+    console.log(olfLeft)
+    var aaa = 100 * 0.1;
+    function handleStart(e) {
+      e.preventDefault();
+      var touches = e.changedTouches;
+      x1 = touches[0].pageX;
+      y1 = touches[0].pageY;
+    }
+    function handleMove(e) {
+      e.preventDefault();
+      var x2 = e.changedTouches[0].pageX;
+      var y2 = e.changedTouches[0].pageY;
+      newLeft = x2 - x1;
+      nowLeft = olfLeft + newLeft;
+      var nowLeft1 = width * 0.1;
+      if (nowLeft < nowLeft1) {
+        nowLeft = nowLeft1;
+      }
+      if (nowLeft > width) {
+        nowLeft = width;
+      }
+      document.querySelector('.progress_bar').style.width = nowLeft + "px";
+      document.querySelector('.progress_btn').style.left = (nowLeft - (nowLeft > (width - 10) ? 10 : 5)) + "px";
+      per = (nowLeft / width).toFixed(2);
+      document.querySelector('.text').innerHTML = parseInt(per * 100) + '%';
+      price_ratio()
+    }
+    function handleEnd(e) {
+      touch.removeEventListener("touchmove", handleEnd, false);
+    }
     $(function () {
       init();
       $("div[name='address-infor']").click(function () {
@@ -59,7 +136,20 @@
       $(".back").click(function () {
         window.location.href = "detail.html";
       });
+      $("body").on("click", ".minus", function () {
+        var oldval = $("input[name='number']");
+        oldval.val(parseInt(oldval.val()) - 1);
+        if (oldval.val() <= 0) {
+          oldval.val(parseInt(oldval.val()) + 1);
+        }
+        price_ratio()
+      })
 
+      $("body").on("click", ".add", function () {
+        var oldval = $("input[name='number']");
+        oldval.val(parseInt(oldval.val()) + 1);
+        price_ratio()
+      })
       $('.submit').click(function () {
         var sendData = {
           product_url: order.img,
@@ -69,10 +159,13 @@
           product_name: order.title,
           productnorms_model: order.productnorms_model[0].size,
           productnorms_cmodel: order.productnorms_model[0].color,
-          product_number: order.number,
+          product_number: $("input[name='number']").val(),
           productnorms_price: order.price,
           address_id: choice_address.address_id,
-          user_uid: localStorage.getItem("uid")
+          user_uid: localStorage.getItem("uid"),
+          ntoken:  $("span[name='NToken']").html(),
+          nusd: $("span[name='NUSD']").html(),
+          tip_money:$("span[name='tip_money']").html()
         };
         $.ajax({
           type: 'POST',
@@ -127,11 +220,13 @@
         if (typeof (order.productnorms_model[0].size) == 'undefined') {
           order.productnorms_model[0].size = ''
         }
+        console.log(order.number)
         $("span[name='selectedPrice']").html(order.price);
-        $("span[name='number']").html(order.number);
+        $("input[name='number']").val(order.number);
         $("p[name='productName']").html(order.title);
-        $("p[name='productName1']").html(order.productnorms_model[0].color + "&nbsp;&nbsp;" + order.productnorms_model[
-          0].size);
+        price_ratio()
+        $("span[name='color_size']").html(order.productnorms_model[0].color + "&nbsp;&nbsp;" + order.productnorms_model[
+          0].size)
         var imageUrl = order.img;
         if (imageUrl) {
           imageUrl = imageUrl.replace(/\\/g, "/");
@@ -145,6 +240,13 @@
         $("p[name='detailAddress']").html(choice_address.address).css('padding-top', '7px');
       }
 
+    }
+    function price_ratio() {
+      number_val = $("input[name='number']").val();
+      a1 = (order.price * number_val * per).toFixed(2);
+      a2 = (order.price * number_val - order.price * number_val * per).toFixed(2);
+      $("span[name='NToken']").html(a2);
+      $("span[name='NUSD']").html(a1);
     }
   </script>
 </body>
