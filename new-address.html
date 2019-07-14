@@ -11,14 +11,14 @@
 </head>
 
 <body>
-    <div class="menu-fixed line-bottom">
-        <header class="head bcfff">
-          <div class="fanhui back" name="back">
-            <a href="javascript:;"><i class="iconfont icon-arrowleft cfff"></i></a>
-          </div>
-          <div class="span1 cfff">添加收货地址</div>
-        </header>
+  <div class="menu-fixed line-bottom">
+    <header class="head bcfff">
+      <div class="fanhui back" name="back">
+        <a href="javascript:;"><i class="iconfont icon-arrowleft cfff"></i></a>
       </div>
+      <div class="span1 cfff">添加收货地址</div>
+    </header>
+  </div>
   <div class="container new-address">
     <div class="new-address-form">
       <div class="form-group">
@@ -72,6 +72,7 @@
       if (r != null) return unescape(r[2]);
       return null;
     }
+    var address_id;
     $(function () {
       $.ajax({
         type: "POST",
@@ -89,13 +90,36 @@
           }
         }
       });
-
+      address_id = $.getUrlParam('address_id');
+      if (address_id) {
+        var params = {
+          address_id: address_id
+        }
+        $.ajax({
+          type: "POST",
+          url: "http://47.91.155.218:18080/mall/api/address/updateInit",
+          contentType: "application/json;charset=UTF-8",
+          data: JSON.stringify(params),
+          success: function (response) {
+            var item = JSON.parse(response);
+            var aa = item.data.region_id;
+            $('#sel1').find("option[data-id=" + aa + "]").attr("selected", true);
+            $("#tel").val(item.data.address_telphone);
+            $("#usr").val(item.data.address_linkman);
+            $("#zipCode").val(item.data.address_zipcode);
+            $("#province").val(item.data.province);
+            $("#city").val(item.data.city);
+            $("#area").val(item.data.area);
+            $("#address_address").val(item.data.address_address);
+          }
+        });
+      }
       $(".submit").click(function () {
         var $_this = $(this).parents('.new-address');
-        var customer_id = $.getUrlParam('uid');
+        var customer_id = localStorage.getItem("uid");
         var region_id = $_this.find('#sel1 option:selected').data('id')
-        var address_linkman = $_this.find('#tel').val()
-        var address_telphone = $_this.find('#usr').val()
+        var address_linkman = $_this.find('#usr').val()
+        var address_telphone = $_this.find('#tel').val()
         var address_zipcode = $_this.find('#zipCode').val()
         var province = $_this.find('#province').val()
         var city = $_this.find('#city').val()
@@ -170,48 +194,103 @@
           address_address: address_address,
           address_state: 1
         };
-        $.ajax({
-          type: 'POST',
-          url: 'http://47.91.155.218:18080/mall/api/address/save',
-          contentType: "application/json;charset=UTF-8",
-          data: JSON.stringify(sendData),
-          success: function (response) {
-            var item = JSON.parse(response);
-            if (item.code == 200) {
-              $.showDialog({
-                content: "添加地址成功",
-                type: "toast",
-                duration: 2000,
-                callback: function () {
-                  window.location.href = "address.html";
-                }
-              });
-            } else {
-              $.showDialog({
-                content: "添加地址失败",
-                type: "toast",
-                duration: 2000,
-                callback: function () {
-                  window.location.reload();
-                }
-              });
+        var sendData1 = {
+          customer_id: customer_id,
+          region_id: region_id,
+          address_linkman: address_linkman,
+          address_telphone: address_telphone,
+          address_zipcode: address_zipcode,
+          province: province,
+          city: city,
+          area: area,
+          address_address: address_address,
+          address_state: 1,
+          address_id: address_id
+        };
+        if (address_id) {
+          $.ajax({
+            type: 'POST',
+            url: 'http://47.91.155.218:18080/mall/api/address/update',
+            contentType: "application/json;charset=UTF-8",
+            data: JSON.stringify(sendData1),
+            success: function (response) {
+              var item = JSON.parse(response);
+              if (item.code == 200) {
+                $.showDialog({
+                  content: "修改地址成功",
+                  type: "toast",
+                  duration: 2000,
+                  callback: function () {
+                    window.location.href = "address.html";
+                  }
+                });
+              } else {
+                $.showDialog({
+                  content: "修改地址失败",
+                  type: "toast",
+                  duration: 2000,
+                  callback: function () {
+                    window.location.reload();
+                  }
+                });
 
+              }
+
+            },
+            error: function () {
+              $.showDialog({
+                content: "系统繁忙，请稍后再试！",
+                type: "toast",
+                duration: 2000
+              });
             }
+          });
+          return false;
+        } else {
+          $.ajax({
+            type: 'POST',
+            url: 'http://47.91.155.218:18080/mall/api/address/save',
+            contentType: "application/json;charset=UTF-8",
+            data: JSON.stringify(sendData),
+            success: function (response) {
+              var item = JSON.parse(response);
+              if (item.code == 200) {
+                $.showDialog({
+                  content: "添加地址成功",
+                  type: "toast",
+                  duration: 2000,
+                  callback: function () {
+                    window.location.href = "address.html";
+                  }
+                });
+              } else {
+                $.showDialog({
+                  content: "添加地址失败",
+                  type: "toast",
+                  duration: 2000,
+                  callback: function () {
+                    window.location.reload();
+                  }
+                });
 
-          },
-          error: function () {
-            $.showDialog({
-              content: "系统繁忙，请稍后再试！",
-              type: "toast",
-              duration: 2000
-            });
-          }
-        });
-        return false;
+              }
+
+            },
+            error: function () {
+              $.showDialog({
+                content: "系统繁忙，请稍后再试！",
+                type: "toast",
+                duration: 2000
+              });
+            }
+          });
+          return false;
+        }
+
       })
       $(".back").click(function () {
-      window.location.href = "address.html";
-    });
+        history.go(-1)
+      });
     })
   </script>
 </body>

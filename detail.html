@@ -18,10 +18,10 @@
       商品详情
     </div>
   </div> -->
-  
+
   <div class="container product-detail posr">
-        <span class="back">
-                &nbsp;</span>
+    <span class="back">
+      &nbsp;</span>
     <div class="images">
       <!--<img name="produtImage" src="" alt="">-->
       <div class="swiper-container  swiper_detail pt10 of">
@@ -32,9 +32,10 @@
     </div>
 
     <div class="infor">
+      <span class="shop_img"></span>
       <p name="productTitle" class="productTitle"></p>
       <p><span class="productPrice" name="productPrice"></span>NTOKEN/NUSD</p>
-      <p>库存: <span class="productNumber" name="productNumber1"></span></p>
+      <p>库存: <span class="productNumber" name="productNumber1">999</span></p>
     </div>
     <div class="options" id="selectOptions">
       <span>选择 规格、数量 等</span><span class="icon"></span>
@@ -55,6 +56,7 @@
           <img name="produtImage1" src="" alt="">
         </div>
         <div class="p-infor">
+          <span class="shop_img"></span>
           <p name="productTitle" class="infor-name productTitle"></p>
           <p class="infor-price"><span class="price productPrice" name="seletPrice"></span>NTOKEN/NUSD
             <span class="balance">库存： <span name="productNumber"></span></span>
@@ -84,11 +86,18 @@
   <script>
     var order = {}
     var aaa = "";
+    var bbb = "";
     var numArr = [];
     var arr, a0, a1, b0, b1, sku, detail_data, size, color;
     $(function () {
       localStorage.removeItem("order");
       findByProduct();
+      var shop_class = localStorage.getItem("shop_class");
+      if (shop_class == 'taobao') {
+        $('.shop_img').removeClass('tianmao_shop').addClass('taobao_shop');
+      } else if (shop_class == 'tianmao') {
+        $('.shop_img').removeClass('taobao_shop').addClass('tianmao_shop');
+      }
     })
     $.getUrlParam = function (name) {
       var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)");
@@ -120,76 +129,83 @@
     })
 
     $("body").on("click", ".add", function () {
+      var add_num = $("span[name='productNumber']").html();
       var oldval = $("input[name='number']");
+      if (parseInt(oldval.val()) >= add_num) {
+        $.showDialog({
+          content: "库存不足",
+          type: "toast",
+          duration: 2000,
+          okCallback: function () {}
+        });
+        return false;
+      }
+
       oldval.val(parseInt(oldval.val()) + 1);
     })
 
 
     function findByProduct() {
       var params = {
-        product_code: $.getUrlParam('product_code'),
-        shoptype: $.getUrlParam('user_type')
+        product_code: $.getUrlParam('product_code')
       }
       $.ajax({
         type: "GET",
-        url: "http://47.99.93.123:9090/rest/tbk/goods/itemdetail",
+        url: "http://47.99.93.123:9090/rest/getGoodsDetail",
         dataType: "json",
         data: {
-          para: params.product_code,
-          shoptype: params.shoptype == 0 ? 'C' : 'B',
-          moreinfo: 1,
-          needsku: 1,
-          onlydetail: 1,
-          onlyglobalinfo: 1
+          skuid: params.product_code
         },
         success: function (response) {
-          var item = response.data;
-          detail_data = item;
+          var item = response;
           if (item) {
-            order.product = item;
-            sku = item.sku;
-            var listData = item.sku.props;
-            for (var i = 0; i < listData.length; i++) {
-              var tmp = listData[i];
-              aaa += tmp.pid + ':' + tmp.values[0].vid + ';';
-            }
-            aaa = aaa.substring(0, aaa.length - 1);
-            arr = aaa.split(";");
-            if (arr[0]) {
-              a0 = arr[0].split(":")[0];
-              a1 = arr[0].split(":")[1];
-            }
-            if (arr[1]) {
-              b0 = arr[1].split(":")[0];
-              b1 = arr[1].split(":")[1];
-            }
-            if (aaa == '') {
-              $("span[name='seletPrice']").html(item.sku.skuprice[0].price.priceText);
-              $("span[name='productNumber']").html(item.sku.skuprice[0].quantity);
-            }
-            for (var k = 0; k < item.sku.skulist.length; k++) {
-              if (item.sku.skulist[k].propPath == aaa) {
-                var skuId = item.sku.skulist[k].skuId;
-                $("span[name='seletPrice']").html(item.sku.skuprice[skuId].price.priceText);
-                $("span[name='productNumber']").html(item.sku.skuprice[skuId].quantity);
+            var imageUrl = item.data;
+            $.each(imageUrl, function (index, item) {
+              if (item) {
+                item = item.replace(/\\/g, "/");
               }
-            }
-            var imageUrl = item.images;
-            var price = item.zk_final_price ? item.zk_final_price : "0";
-            if (imageUrl[0]) {
-              imageUrl[0] = imageUrl[0].replace(/\\/g, "/");
-              $("img[name=produtImage1]").attr("src", "https:" + imageUrl[0]);
-            }
-            $.each(imageUrl, function (index, item1) {
-              if (item1) {
-                item1 = item1.replace(/\\/g, "/");
-              }
-              $("div[name='product-list']").append("<div class='swiper-slide'><a href='javascript:;'>" +
-                "<img class='news-row-center'  src=" + "https:" + item1 + "></a></div>" +
-                "</div>");
+              $("div[name='produtImage2']").append("<img class='w100' src=" + "https:" + item + ">");
             })
+          }
+        }
+      });
+      $.ajax({
+        type: "GET",
+        url: "http://47.99.93.123:9090/rest/queryJdGoods",
+        dataType: "json",
+        data: {
+          skuIds: params.product_code
+        },
+        success: function (response) {
+          var item = response.data[0];
+          console.log(item)
+          // detail_data = JSON.parse(item.info).n_tbk_item;
+          if (item) {
+            var imageUrl = item.imgUrl;
+            console.log(imageUrl)
 
+            var price = item.unitPrice ? item.unitPrice + ".00" : "0.00";
+            // var items = JSON.parse(item.info).n_tbk_item;
+            // var small_images = JSON.parse(item.info).n_tbk_item.small_images;
+
+            // var price = items.zk_final_price ? items.zk_final_price + ".00" : "0.00";
+            // if (items.pict_url) {
+            //   items.pict_url = items.pict_url.replace(/\\/g, "/");
+            //   $("img[name=produtImage1]").attr("src", items.pict_url);
+            // }
+            // $.each(imageUrl, function (index, item1) {
+            console.log(imageUrl)
+            if (imageUrl) {
+              imageUrl = imageUrl.replace(/\\/g, "/");
+            }
+            $("div[name='product-list']").append("<div class='swiper-slide'><a href='javascript:;'>" +
+              "<img class='news-row-center'  src=" + imageUrl + "></a></div>" +
+              "</div>");
+
+            // })
             var swiper = new Swiper('.swiper_detail', {
+              observer: true,
+              observeParents: true,
               pagination: {
                 el: '.swiper-pagination',
                 clickable: true,
@@ -200,81 +216,110 @@
               },
               loop: true
             });
-            $("p[name=productTitle]").html(item.title);
+            $("p[name=productTitle]").html(item.goodsName);
             $("span[name=productPrice]").html(price);
-            $("span[name=productNumber1]").html(sku.skuprice[0].quantity);
-
-            var itemStart = "<div class='op-item'>";
-            var items = ""
-            if (item.sku.props && item.sku.props.length > 0) {
-              item.sku.props.forEach(function (item1) {
-
-                items += "<div><div class='title'>" + item1.name + "</div>"
-                item1.values.forEach(function (item2) {
-                  items += "<span  data-pid='" + item1.pid + "' data-vid='" + item2.vid +
-                    "' data-name='" + item2.name + "'>" + item2
-                    .name + "</span>";
-                })
-                items += "</div>"
-              })
-            }
-            var itemEnd = "</div>";
-
-            $("div[name='op-infor']").append(itemStart + items + itemEnd);
-          }
-        }
-      });
-      $.ajax({
-        type: "GET",
-        url: "http://47.99.93.123:9090/rest/tbk/goods/itemdetail",
-        dataType: "json",
-        data: {
-          para: params.product_code,
-          shoptype: params.shoptype = 0 ? 'B' : 'c',
-        },
-        success: function (response) {
-          var item = response.data;
-          if (item) {
-            var imageUrl = item.item_detail;
-            $.each(imageUrl, function (index, item) {
-              if (item) {
-                item = item.replace(/\\/g, "/");
-              }
-              $("div[name='produtImage2']").append("<img class='w100' src=" + item + ">");
-            })
-
 
           }
         }
       });
+      // $.ajax({
+      //   type: "GET",
+      //   url: "http://47.99.93.123:9090/rest/getJDItemDesc",
+      //   dataType: "json",
+      //   data: {
+      //     scanUrl: "https://item.jingdong.com/item.htm?id=" + params.product_code
+      //   },
+      //   beforeSend: function () {
+      //     $.loading_alert_show('正在加载中');
+      //   },
+      //   success: function (response) {
+      //     $.loading_alert_hide();
+      //     var item = response.data.product_details;
+      //     if (item) {
+      //       $("span[name=productNumber1]").html(item.comments_count);
+      //       order.product = item;
+      //       sku = item.product_sku_detail;
+      //       var listData = item.sku;
+      //       for (var i = 0; i < listData.length; i++) {
+      //         var tmp = listData[i];
+      //         aaa += tmp.values[0].desc;
+      //         bbb += tmp.values[0].desc + ';';
+      //       }
+      //       bbb = bbb.substring(0, bbb.length - 1);
+
+      //       arr = bbb.split(";");
+      //       if (arr[0]) {
+      //         a0 = '尺码';
+      //         a1 = arr[0];
+      //       }
+      //       if (arr[1]) {
+      //         b0 = '颜色分类';
+      //         b1 = arr[1];
+      //       }
+      //       if (aaa == '') {
+      //         $("span[name='seletPrice']").html(item.current_price + ".00");
+      //         $("span[name='productNumber']").html(item.comments_count);
+      //       }
+      //       for (var k = 0; k < item.product_sku_detail.length; k++) {
+      //         var aaaa = item.product_sku_detail[k].sku_name.replace(/[ ]/g, "");
+
+      //         if (aaaa == aaa) {
+      //           var skuId = item.product_sku_detail[k].sku_id;
+      //           $("span[name='seletPrice']").html(item.product_sku_detail[k].sku_price + ".00");
+      //           $("span[name='productNumber']").html(item.product_sku_detail[k].sku_stock);
+      //         }
+      //       }
+      //       var price = item.zk_final_price ? item.zk_final_price + ".00 N TOKEN" : "0.00 N TOKEN";
+
+      //       var itemStart = "<div class='op-item'>";
+      //       var items1 = ""
+      //       if (item.sku && item.sku.length > 0) {
+      //         item.sku.forEach(function (item1) {
+      //           items1 += "<div><div class='title'>" + item1.label + "</div>"
+      //           item1.values.forEach(function (item2) {
+      //             items1 += "<span data-pid='" + item1.label + "'  data-vid='" + item2.desc +
+      //               "' data-name='" + item2.desc + "'>" + item2
+      //               .desc + "</span>";
+      //           })
+      //           items1 += "</div>"
+      //         })
+      //       }
+      //       var itemEnd = "</div>";
+
+      //       $("div[name='op-infor']").append(itemStart + items1 + itemEnd);
+      //     }
+      //   }
+      // });
+
       $("div[name='op-infor']").click(function (e) {
         if (e && e.target && e.target.dataset &&
           e.target.dataset.vid) {
           var number = $("input[name='number']").val();
           var pid = e.target.dataset.pid;
           var vid = e.target.dataset.vid;
-
-          if (aaa.indexOf(a0) > -1 && pid == a0) {
+          if (a0 && pid == a0) {
             a1 = e.target.dataset.vid;
-            size = e.target.dataset.name
-          } else if (aaa.indexOf(b0) > -1 && pid == b0) {
+            size = e.target.dataset.vid;
+          } else if (b0 && pid == b0) {
             b1 = e.target.dataset.vid;
-            color = e.target.dataset.name;
+            color = e.target.dataset.vid;
           }
-          if (a0 == undefined || a1 == undefined) {
-            aaa = b0 + ':' + b1;
-          } else if (b0 == undefined || b1 == undefined) {
-            aaa = a0 + ':' + a1;
+          if (a0 == undefined) {
+            aaa = vid;
+            color = e.target.dataset.vid;
+          } else if (b0 == undefined) {
+            aaa = vid;
+            size = e.target.dataset.vid;
           } else {
-            aaa = a0 + ':' + a1 + ';' + b0 + ':' + b1;
+            aaa = a1 + b1;
           }
+          for (var k = 0; k < sku.length; k++) {
 
-
-          for (var k = 0; k < sku.skulist.length; k++) {
-            if (sku.skulist[k].propPath == aaa) {
-              var skuId = sku.skulist[k].skuId;
-              $("span[name='seletPrice']").html(sku.skuprice[skuId].price.priceText);
-              $("span[name='productNumber']").html(sku.skuprice[skuId].quantity);
+            var aaaa = sku[k].sku_name.replace(/[ ]/g, "");
+            if (aaaa == aaa) {
+              var skuId = sku[k].skuId;
+              $("span[name='seletPrice']").html(sku[k].sku_price + '.00');
+              $("span[name='productNumber']").html(sku[k].sku_stock);
             }
           }
           $(e.target).siblings().each(function (i, item) {
@@ -298,7 +343,6 @@
             return false;
           }
         } else if (typeof (b0) == "undefined" && typeof (a0) != "undefined") {
-
           if (typeof (size) == 'undefined' || size == '') {
             $.showDialog({
               content: "请选择相应规格",
@@ -319,16 +363,27 @@
             return false;
           }
         }
+        var productNum = $("span[name='productNumber']").html();
+        if (productNum == 0) {
+          $.showDialog({
+            content: "库存不足",
+            type: "toast",
+            duration: 2000,
+            okCallback: function () {}
+          });
+          return false;
+        }
         var number = $("input[name='number']").val();
         var price = $("span[name='seletPrice']").html().trim();
         numArr = {
-          img: detail_data.images[0],
+          img: detail_data.pict_url,
           title: detail_data.title,
           number: number,
+          total_num: $("span[name='productNumber']").html(),
           price: price,
-          business_name: detail_data.seller.shopName,
-          business_uid: detail_data.seller.userId,
-          business_url: detail_data.seller.taoShopUrl,
+          business_name: detail_data.nick,
+          business_uid: detail_data.seller_id,
+          business_url: detail_data.item_url,
           productnorms_model: [{
             size: size,
             color: color,
@@ -336,7 +391,6 @@
 
         };
         localStorage.setItem("order", JSON.stringify(numArr));
-
         product_code = $.getUrlParam('product_code')
         window.location.href = "order.html?product_code=" + product_code;
       });

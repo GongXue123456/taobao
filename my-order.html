@@ -28,11 +28,11 @@
   <div data-am-widget="tabs" class="am-tabs am-tabs1 am-tabs-d2 am-no-layout">
     <ul class="am-tabs-nav am-cf">
       <li class="am-active" data-code=''>全部</li>
-      <li class="" data-code='1'>待付款<span class="am-badge am-round1">1</span></li>
+      <!-- <li class="" data-code='1'>待付款<span class="am-badge am-round1">1</span></li> -->
       <li class="" data-code='2'>待收货<span class="am-badge am-round2">1</span></li>
-      <li class="" data-code='3'>已取消</li>
+      <!-- <li class="" data-code='3'>已取消</li> -->
       <li class="" data-code='4'>已完成</li>
-      <li class="" data-code='5'>退货</li>
+      <!-- <li class="" data-code='5'>退货</li> -->
     </ul>
   </div>
   <div data-am-widget="tabs" class="am-tabs am-tabs2 am-tabs-d2 am-no-layout" style="padding-top: 100px">
@@ -111,8 +111,19 @@
         }
       });
       $(".back").click(function () {
-        window.location.href = "index.html";
+        history.go(-1);
       })
+      $("div[name='product-list']").click(function (e) {
+        if (e && e.target) {
+          var target = e.target;
+          var order_code = 0;
+          if (target.dataset && target.dataset.code) {
+            order_code = target.dataset.code;
+            window.location.href = "order-detail.html?order_code=" + order_code;
+          }
+
+        }
+      });
     })
 
     function getPageList() {
@@ -131,66 +142,97 @@
         success: function (response) {
           var item = JSON.parse(response);
           var data = item.data.taobaoorderlist;
+          var order_state = item.order_state;
           loadItemComplete = true;
           if (item.code == 200) {
             $('.am-round1').html(item.data.count_state1);
             $('.am-round2').html(item.data.count_state2)
-            if (data && data.length > 0) {
-              $(".order-no").hide();
-              if (data.length < 4) {
+            if (order_state == '' || order_state == 2 || order_state == 4) {
+              if (data && data.length > 0) {
+
+                $(".order-no").hide();
+                if (data.length < 4) {
+                  isEnd = true;
+                }
+                $.each(data, function (index, item) {
+
+                  if (order_state == 2) {
+                    var orderState = '待收货';
+                  } else if (order_state == 4) {
+                    var orderState = '已完成';
+                  }
+                  console.log(orderState)
+                  if (orderState == undefined) {
+                    orderState = ''
+                  }
+                  $("div[name='product-list']").append(
+                    "<div class='box am-padding-xs am-margin-bottom-xs' data-code='" + item.order_code +
+                    "'>" +
+                    "<div class='mo_list_tit' data-code='" + item.order_code +
+                    "'>" +
+                    "<a class='mine' href='javascript:void(0);' data-code='" + item.order_code +
+                    "'>订单编号：" + item.order_code + "</a>" +
+                    "<div class='wait' data-code='" + item.order_code +
+                    "'>" + orderState +
+                    "</div>" +
+                    "</div>" +
+                    "<ul class='' data-code='" + item.order_code +
+                    "' id='order-lists'><li><div>" +
+                    "<img data-code='" + item.order_code +
+                    "' src='" + item.product_url +
+                    "' width='60' height='60'></div>" +
+                    "<div class='t_name' data-code='" + item.order_code +
+                    "'><span class='shop_img'></span><span style='text-indent: 30px;display: inline-block;'>" +
+                    item.product_name +
+                    "</span><div class='t_price' data-code='" + item.order_code +
+                    "'>" +
+                    "<p>" + item.ntoken + ".00&nbsp;NTOKEN+" + item.nusd +
+                    ".00&nbsp;NUSD</p>" +
+                    "</div>" +
+                    "</div>" +
+                    "</li></ul>" +
+
+                    "<div class='mo_total data-code='" + item.order_code +
+                    "''>" +
+                    "<div class='am-padding-bottom'>" +
+                    "<span class='mo_t_mun' data-code='" + item.order_code +
+                    "'>共计" + item.product_number + "件商品 合计： </span><span>" + item
+                    .ntoken + ".00&nbsp;NTOKEN+" + item.nusd + ".00&nbsp;NUSD</span>" +
+                    " </div>" +
+                    "<div class = 'am-padding-bottom mt5' data-code='" + item.order_code +
+                    "'> " +
+                    "<span class='mo_t_mun' data-code='" + item.order_code +
+                    "'>购物手续费：" + item.tip_money + ".00&nbsp;NINECOIN</span>" +
+                    "</div>" +
+                    "</div></div>"
+                  )
+
+                  var shop_class = localStorage.getItem("shop_class");
+                  if (shop_class == 'taobao') {
+                    $('.shop_img').removeClass('tianmao_shop').addClass('taobao_shop');
+                  } else if (shop_class == 'tianmao') {
+                    $('.shop_img').removeClass('taobao_shop').addClass('tianmao_shop');
+                  }
+                });
+
+              } else {
+                console.log(search.pager_offset)
+                if (search.pager_offset == 0) {
+                  $(".order-no").show();
+                  $('.loading-more1').hide()
+                  $('.loading-more').hide()
+                } else {
+                  $(".order-no").hide();
+                  $('.loading-more1').show()
+                  $('.loading-more').hide();
+                }
+
                 isEnd = true;
               }
-              $.each(data, function (index, item) {
-                var order_state = item.order_state;
-                if (order_state == 1) {
-                  var orderState = '待付款';
-                } else if (order_state == 2) {
-                  var orderState = '待收货';
-                } else if (order_state == 3) {
-                  var orderState = '已取消';
-                } else if (order_state == 4) {
-                  var orderState = '已完成';
-                } else if (order_state == 5) {
-                  var orderState = '退货';
-                }
-                $("div[name='product-list']").append("<div class='box am-padding-xs am-margin-bottom-xs'>" +
-                  "<div class='mo_list_tit'>" +
-                  "<a class='mine' href='javascript:void(0);'>订单编号：" + item.order_code + "</a>" +
-                  "<div class='wait'>" + orderState +
-                  "</div>" +
-                  "</div>" +
-                  "<ul class='' id='order-lists'><li><div>" +
-                  "<img src='https:" + item.product_url + "' width='60' height='60'></div>" +
-                  "<div class='t_name'>" + item.product_name +
-                  "<div class='t_price'>" +
-                  "<p>" + item.ntoken + "&nbsp;NTOKEN+" + item.nusd +
-                  "&nbsp;NUSD</p>" +
-                  "</div>" +
-                  "</div>" +
-                  "</li></ul>" +
-
-                  "<div class='mo_total '>" +
-                  "<div class='am-padding-bottom'>" +
-                  "<span class='mo_t_mun'>共计" + item.product_number + "件商品 合计： </span><span>" +  item.ntoken + "&nbsp;NTOKEN+" + item.nusd + "&nbsp;NUSD</span>" +
-                  " </div>" +
-                  "<div class = 'am-padding-bottom mt5' > " +
-                  "<span class='mo_t_mun'>购物手续费：" + item.tip_money + "&nbsp;NINECOIN</span>" +
-                  "</div>" +
-                  "</div></div>"
-                )
-              });
             } else {
-              if (search.pager_offset == 0) {
-                $(".order-no").show();
-                $('.loading-more1').hide()
-                $('.loading-more').hide()
-              } else {
-                $(".order-no").hide();
-                $('.loading-more1').show()
-                $('.loading-more').hide();
-              }
-
-              isEnd = true;
+              $(".order-no").show();
+              $('.loading-more1').hide()
+              $('.loading-more').hide()
             }
           } else {
             $.showDialog({

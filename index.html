@@ -11,18 +11,19 @@
   <link rel="stylesheet" href="css/swiper.min.css">
   <link rel="stylesheet" href="css/index1.css">
   <link rel="stylesheet" href="http://at.alicdn.com/t/font_488112_jwsm2fctrw.css">
- 
+
 </head>
 
 <body class="shop_index">
-  <div class="menu-fixed taobao_shop">
+  <div class="menu-fixed">
     <header class="head bgc-t">
-      <div class="fanhui">
+      <div class="fanhui back" id="back">
         <a href="javascript:;"><img src="images/back.png"></a>
       </div>
       <div class="span1 c000">淘宝</div>
       <div class="gengduo">
-        <i class="iconfont icon-person_line"></i>
+        <a href="my.html"> <i class="iconfont icon-person_line"></i></a>
+
       </div>
 
     </header>
@@ -40,14 +41,63 @@
       </form>
       <a href="javascript:" class="weui_search_ok" id="search">查询</a>
     </div>
-    <div class="swiper-container  swiper1">
-      <div class="swiper-wrapper">
+    <div class="swiper-container swiper_taobao swiper1" style="display: none">
+      <div class="swiper-wrapper ">
         <div class='swiper-slide'>
           <a href='javascript:;'>
-            <img class='news-row-center' src="  ">
+            <img class='news-row-center w100' src="images/tb1.jpg">
           </a>
         </div>
-
+        <div class='swiper-slide'>
+          <a href='javascript:;'>
+            <img class='news-row-center w100' src="images/tb2.jpg">
+          </a>
+        </div>
+        <div class='swiper-slide'>
+          <a href='javascript:;'>
+            <img class='news-row-center w100' src="images/tb3.jpg">
+          </a>
+        </div>
+        <div class='swiper-slide'>
+          <a href='javascript:;'>
+            <img class='news-row-center w100' src="images/tb4.jpg">
+          </a>
+        </div>
+        <div class='swiper-slide'>
+          <a href='javascript:;'>
+            <img class='news-row-center w100' src="images/tb5.jpg">
+          </a>
+        </div>
+      </div>
+      <div class="swiper-pagination" style="bottom: 5px;"></div>
+    </div>
+    <div class="swiper-container swiper_tianmao swiper1" style="display: none">
+      <div class="swiper-wrapper ">
+        <div class='swiper-slide'>
+          <a href='javascript:;'>
+            <img class='news-row-center w100' src="images/tm1.jpg">
+          </a>
+        </div>
+        <div class='swiper-slide'>
+          <a href='javascript:;'>
+            <img class='news-row-center w100' src="images/tm2.jpg">
+          </a>
+        </div>
+        <div class='swiper-slide'>
+          <a href='javascript:;'>
+            <img class='news-row-center w100' src="images/tm3.jpg">
+          </a>
+        </div>
+        <div class='swiper-slide'>
+          <a href='javascript:;'>
+            <img class='news-row-center w100' src="images/tm4.jpg">
+          </a>
+        </div>
+        <div class='swiper-slide'>
+          <a href='javascript:;'>
+            <img class='news-row-center w100' src="images/tm5.jpg">
+          </a>
+        </div>
       </div>
       <div class="swiper-pagination" style="bottom: 5px;"></div>
     </div>
@@ -55,30 +105,42 @@
       <div class="swiper-wrapper">
         <div class='swiper-slide'>
           <div class="weui-row" id="menu">
-
           </div>
         </div>
         <div class='swiper-slide'>
           <div class="weui-row" id="menu1">
-
           </div>
         </div>
-
+        <div class='swiper-slide'>
+          <div class="weui-row" id="menu2">
+          </div>
+        </div>
+        <div class='swiper-slide'>
+          <div class="weui-row" id="menu3">
+          </div>
+        </div>
+        <div class='swiper-slide'>
+          <div class="weui-row" style="width: 94%" id="menu4">
+          </div>
+        </div>
       </div>
     </div>
     <div class="goods-search-list-nav">
       <ul id="nav_ul">
-        <li><a href="javascript:void(0);" class="choice_unit current posr" id="sort_default">综合<span class="bottom" data-name=""></span></a></li>
-        <li><a href="javascript:void(0);" class="choice_unit posr" id="search_adv">销量<span class="top" data-name="total_sales_asc">234</span><span data-name="total_sales_des" class="bottom"></span></a></li>
-        <li><a href="javascript:void(0);" class="choice_unit posr" id="price">价格<span class="top" data-name="price_asc"></span><span class="bottom" data-name="price_des"></span></a></li>
+        <li><a href="javascript:void(0);" class="choice_unit current posr" id="sort_default">综合<span class="bottom"
+              data-name=""></span></a></li>
+        <li><a href="javascript:void(0);" class="choice_unit posr" id="search_adv">销量<span class="top"
+              data-name="total_sales_asc">234</span><span data-name="total_sales_des" class="bottom"></span></a></li>
+        <li><a href="javascript:void(0);" class="choice_unit posr" id="price">价格<span class="top"
+              data-name="price_asc"></span><span class="bottom" data-name="price_des"></span></a></li>
       </ul>
       <div class="browse-mode"><a href="javascript:void(0);" id="show_style"><span class="browse-list"></span></a></div>
 
     </div>
   </div>
-  
+
   <div class="container-index posr">
-      <div style="background-color: #f5f5f5;height:10px;width:100%;"></div>
+    <div style="background-color: #f5f5f5;height:10px;width:100%;"></div>
     <!-- <div class="menu">
             <ul id="menu">
             </ul>
@@ -109,40 +171,83 @@
     var search = {
       pager_offset: 1,
       category_code: "",
-      product_name: "全部",
-      sort:''
+      product_name: "数码",
+      sort: ''
+    }
+    $.getUrlParam = function (name) {
+      var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)");
+      var r = window.location.search.substr(1).match(reg);
+      if (r != null) return unescape(r[2]);
+      return null;
+    }
+    var shop_class = $.getUrlParam('params');
+    shop_class = "tianmao"
+    if (shop_class != null) {
+      localStorage.setItem("shop_class", shop_class);
+    } else {
+      shop_class = localStorage.getItem("shop_class");
+    }
+
+    // window.jsInterface.getUserId();
+
+    function callbackUserId(uid) {
+      uid = 100161
+      if (uid) {
+        localStorage.setItem("uid", uid);
+      }
     }
     $(function () {
+      callbackUserId()
       $.ajax({
         type: "GET",
-        url: "http://47.99.93.123:9090/rest/tbk/goods/getCategory",
+        url: "http://47.99.93.123:9090/rest/getCategory",
         dataType: "json",
+        data: {
+          parentId: 0,
+          grade: 0
+        },
         success: function (response) {
           $("#menu").html("");
           loadMenuComplete = true;
-          var data = response;
+          var data = response.data;
+          console.log(data)
           if (data && data.length > 0) {
-            console.log(data.slice(0, 10))
             var data1 = data.slice(0, 10)
-            var data2 = data.slice(10, data.length)
-            // $("#menu1").append("<li class='active'>全部</li>");
+            var data2 = data.slice(10, 20)
+            var data3 = data.slice(20, 30)
+            var data4 = data.slice(30, 40)
+            var data5 = data.slice(40, data.length)
             $.each(data1, function (index, item) {
-              $("#menu").append("<div class='weui-col-20' data-test='" + item.cat_name + "' data-code='" +
-                item.category_code +
-                "'><img src='" +
-                item.cat_icon + "'><span>" + item.cat_name + "</span></div>");
+              $("#menu").append("<div class='weui-col-20' data-test='" + item.name + "' data-code='" +
+                item.id +
+                "'><span>" + item.name + "</span></div>");
             });
             $.each(data2, function (index, item) {
-              $("#menu1").append("<div class='weui-col-20' data-test='" + item.cat_name + "' data-code='" + item.category_code +
-                "'><img src='" +
-                item.cat_icon + "'>" + item.cat_name + "</div>");
+              $("#menu1").append("<div class='weui-col-20' data-test='" + item.name +
+                "' data-code='" + item.id +
+                "'>" + item.name + "</div>");
+            });
+            $.each(data3, function (index, item) {
+              $("#menu2").append("<div class='weui-col-20' data-test='" + item.name +
+                "' data-code='" + item.id +
+                "'>" + item.name + "</div>");
+            });
+            $.each(data4, function (index, item) {
+              $("#menu3").append("<div class='weui-col-20' data-test='" + item.name +
+                "' data-code='" + item.id +
+                "'>" + item.name + "</div>");
+            });
+            $.each(data5, function (index, item) {
+              $("#menu4").append("<div class='weui-col-20' data-test='" + item.name +
+                "' data-code='" + item.id +
+                "'>" + item.name + "</div>");
             });
             $("#menu .weui-col-20,#menu1 .weui-col-20").click(function (e) {
               if (e && e.target) {
                 $("#search_input").val("");
                 var event = e.target;
                 search.category_code = search.category_code ? search.category_code : "";
-                search.sort=search.sort ? search.sort : "";
+                search.sort = search.sort ? search.sort : "";
                 search.pager_offset = 1;
                 search.product_name = $(this).data('test');
                 $("div[name='product-list']").html("");
@@ -161,32 +266,29 @@
       getPageList();
     }
     $("body").on("click", "#nav_ul li", function () {
-      console.log(110)
       $('#nav_ul li').find('.choice_unit').removeClass("current");
       search.category_code = search.category_code ? search.category_code : "";
       search.product_name = search.product_name ? search.product_name : "";
-                search.pager_offset = 1;
+      search.pager_offset = 1;
       $(this).find('.choice_unit').addClass("current");
-      if( $(this).find('span.top').hasClass('current')){
+      if ($(this).find('span.top').hasClass('current')) {
         $('#nav_ul li span.top,#nav_ul li span.bottom').removeClass("current");
-         $(this).find('span.bottom').addClass("current").siblings().removeClass("current");
-        var  aaa=$(this).find('span.bottom').data('name');
+        $(this).find('span.bottom').addClass("current").siblings().removeClass("current");
+        var aaa = $(this).find('span.bottom').data('name');
         search.sort = $(this).find('span.bottom').data('name');
-        console.log(aaa)
-      }else{
+      } else {
         $('#nav_ul li span.top,#nav_ul li span.bottom').removeClass("current");
-         $(this).find('span.top').addClass("current").siblings().removeClass("current");
-          search.sort = $(this).find('span.top').data('name');
+        $(this).find('span.top').addClass("current").siblings().removeClass("current");
+        search.sort = $(this).find('span.top').data('name');
       }
       $("div[name='product-list']").html("");
-                getPageList(search);
-  
-})
+      getPageList(search);
+
+    })
     $("#search").click(function () {
       search.product_name = $("#search_input").val();
-      console.log($("#search_input").val())
       search.category_code = search.category_code ? search.category_code : "";
-      search.sort=search.sort ? search.sort : "";
+      search.sort = search.sort ? search.sort : "";
       search.pager_offset = 1;
       if (search.product_name == '') {
         $.showDialog({
@@ -210,7 +312,7 @@
         if (target.dataset && target.dataset.code) {
           product_code = target.dataset.code;
           user_type = target.dataset.type;
-          window.location.href = "detail.html?product_code=" + product_code + "&user_type=" + user_type;
+          window.location.href = "detail.html?product_code=" + product_code;
         }
 
       }
@@ -240,50 +342,65 @@
     function getPageList() {
       $.ajax({
         type: "GET",
-        url: "http://47.99.93.123:9090/rest/tbk/goods/sellerTbkList",
+        url: "http://47.99.93.123:9090/rest/goodsList",
         dataType: "json",
         data: {
           keyword: search.product_name,
-          pagesize: 20,
-          pageno: search.pager_offset,
-          sort:search.sort
+          pageSize: 20,
+          pageIndex: search.pager_offset,
+          sortName: search.sort,
+          isCoupon: 0,
         },
         success: function (response) {
-          var data = response.data;
+          var data = response.data.lists;
+          console.log(data)
           loadItemComplete = true;
           if (data && data.length > 0) {
             $.each(data, function (index, item) {
-              var imageUrl = item.pict_url;
-              var price = item.reserve_price ? item.reserve_price + '' : "0";
+              var imageUrl = item.imageInfo.imageList[0].url;
+              var price = item.priceInfo.price ? item.priceInfo.price + '.00' : "0.00";
               if (imageUrl) {
                 imageUrl = imageUrl.replace(/\\/g, "/");
               }
-              $("div[name='product-list']").append("<div class='items' data-type='" + item.user_type +
-                "' data-code='" + item.num_iid +
+              $("div[name='product-list']").append("<div class='items'" +
+                "' data-code='" + item.skuId +
                 "'>" +
-                "<img src=" + imageUrl + " data-type='" + item.user_type +
-                "' data-code='" + item.num_iid + "'>" +
+                "<img src=" + imageUrl +
+                " data-code='" + item.skuId + "'>" +
                 "<div class='infor posr' data-type='" + item.user_type +
-                "' data-code='" + item.num_iid + "'>" +
-                "    <a href='#' class='desc' data-type='" + item.user_type +
-                "' data-code='" + item.num_iid + "'>" + item.title +
+                "' data-code='" + item.skuId + "'>" +
+                "    <a href='#' class='desc' " +
+                "' data-code='" + item.skuId + "'>" + item.skuName +
                 "</a>" +
-                "<p class='price-infor' data-code='" + item.num_iid + "'>" +
-                "<span class='price' data-code='" + item.num_iid + "'>" + price +
+                "<p class='price-infor' data-code='" + item.skuId + "'>" +
+                "<span class='price' data-code='" + item.skuId + "'>" + price +
                 "</span><span class='price-unit'>NTOKEN/NUSD</span>" +
-                "<span class='type tmall' data-code='" + item.num_iid + "'>&nbsp;</span>" +
-                "<span class=' tsales'>已售&nbsp;"+item.volume+"</span>" +
+                "<span class='type tmall' data-code='" + item.skuId + "'>&nbsp;</span>" +
+                "<span class=' tsales'>已售&nbsp;" + item.inOrderCount30Days + "</span>" +
                 "</p>" +
                 "<div class='coupon-infor fs'>50%积分回馈，相当于5折消费</div>" +
                 "</div>" +
                 "</div>"
               )
             });
-            if ($('#show_style').find('span').hasClass('browse-list')) {
+            if (shop_class == 'taobao') {
+              $('.menu-fixed,.tmall').removeClass('tianmao_shop').addClass('taobao_shop');
+              $('.span1').html('淘宝');
+              $('.swiper_taobao').show();
+              $("#show_style").find('span').removeClass('browse-grid').addClass('browse-list')
               $('.product-list').find('.items').removeClass('item1').addClass('item')
-            } else {
+            } else if (shop_class == 'tianmao') {
+              $('.menu-fixed,.tmall').removeClass('taobao_shop').addClass('tianmao_shop');
+              $('.span1').html('天猫');
+              $('.swiper_tianmao').show();
+              $("#show_style").find('span').removeClass('browse-list').addClass('browse-grid')
               $('.product-list').find('.items').removeClass('item').addClass('item1')
             }
+            // if ($('#show_style').find('span').hasClass('browse-list')) {
+            //   $('.product-list').find('.items').removeClass('item1').addClass('item')
+            // } else {
+            //   $('.product-list').find('.items').removeClass('item').addClass('item1')
+            // }
             $("body").on("click", "#show_style .browse-list", function () {
               $(this).removeClass('browse-list').addClass('browse-grid')
               $('.product-list').find('.items').removeClass('item').addClass('item1')
@@ -300,6 +417,8 @@
       });
     }
     var swiper = new Swiper('.swiper1', {
+      observer: true,
+      observeParents: true,
       pagination: {
         el: '.swiper-pagination',
         clickable: true,
@@ -310,6 +429,7 @@
       },
       loop: true
     });
+
     var swiper = new Swiper('.swiper2', {
 
     });
